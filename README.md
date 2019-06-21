@@ -27,6 +27,7 @@ Dependencies are listed in a file named `mrs.developer.json`:
             "path": "src/lib",
             "package": "@plone/restapi-angular",
             "url": "git@github.com:plone/plone.restapi-angular.git",
+            "https": "https://github.com/plone/plone.restapi-angular.git",
             "tag": "1.3.1"
         }
     }
@@ -74,6 +75,11 @@ will not write any config
 $ missdev --output=myfolder
 ```
 will checkout the files in src/myfolder
+
+```
+$ missdev --https
+```
+will use the `https` entry (if it exists) instead of the `url` entry for each repository
 
 ## Config file structure
 

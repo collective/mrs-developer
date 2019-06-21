@@ -99,7 +99,11 @@ const openRepository = function (name, path) {
 const checkoutRepository = function (name, root, settings, options) {
     const { noFetch, reset, lastTag } = options || {};
     const pathToRepo = path.join(root, name);
-    const promise = !fs.existsSync(pathToRepo) ? cloneRepository(name, pathToRepo, settings.url) :
+    let url = settings.url;
+    if (options.https && settings.https) {
+        url = settings.https;
+    }
+    const promise = !fs.existsSync(pathToRepo) ? cloneRepository(name, pathToRepo, url) :
         openRepository(name, pathToRepo);
     return promise.then(git => {
         if (!!git) {
