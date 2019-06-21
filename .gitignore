@@ -1,0 +1,9 @@
+.envrc
+.nvmrc
+.jshintrc
+node_modules/
+src/develop
+/mrs.developer.json
+/tsconfig.json
+/test/fake-remote
+/test/src

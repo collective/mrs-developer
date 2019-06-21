@@ -1,0 +1,29 @@
+{
+  "name": "mrs-developer",
+  "version": "1.0.0",
+  "description": "manage NPM dependencies as Git repositories",
+  "bin": {
+    "missdev": "src/command.js"
+  },
+  "main": "src/index.js",
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "keywords": [
+    "multirepo",
+    "git",
+    "npm",
+    "dependencies"
+  ],
+  "author": "Eric BREHAULT",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "^1.3.3",
+    "simple-git": "^1.115.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "mock-fs": "^4.10.1"
+  }
+}

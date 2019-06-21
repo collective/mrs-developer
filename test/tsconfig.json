@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "paths": {
+            "repo1": [
+                "develop/repo1"
+            ],
+            "@test/package2": [
+                "develop/repo2"
+            ],
+            "repo3": [
+                "develop/repo3/lib/core"
+            ]
+        },
+        "baseUrl": "src"
+    }
+}

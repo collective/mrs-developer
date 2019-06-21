@@ -1,0 +1,7 @@
+/test
+/docs
+.eslintrc
+/mrs.developer.json
+/tsconfig.json
+/src/develop
+.travis.yml

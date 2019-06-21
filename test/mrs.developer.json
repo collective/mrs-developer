@@ -1,0 +1,15 @@
+{
+    "repo1": {
+        "url": "./test/fake-remote/repo1"
+    },
+    "repo2": {
+        "package": "@test/package2",
+        "url": "./test/fake-remote/repo1",
+        "branch": "staging"
+    },
+    "repo3": {
+        "path": "lib/core",
+        "url": "./test/fake-remote/repo1",
+        "tag": "1.0.0"
+    }
+}
