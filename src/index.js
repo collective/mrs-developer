@@ -65,14 +65,16 @@ const setHead = function (name, repository, settings, reset, lastTag, noFetch) {
         } else if (lastTag) {
             return repository.checkoutLatestTag();
         } else if (settings.tag) {
-            return repository.checkout(settings.tag)
+            const promise = !noFetch ? repository.fetch() : Promise.resolve();
+            return promise
+                .then(() => repository.checkout(settings.tag))
                 .then(() => console.log(colors.green(`✓ update ${name} to tag ${settings.tag}`)));
         } else {
             const branch = settings.branch || 'master';
             return repository.checkout(branch)
                 .then(() => {
                     if (!noFetch) {
-                        return repository.pull(`origin`, branch, ['rebase']);
+                        return repository.pull('origin', branch, ['rebase']);
                     }
                 })
                 .then(() => console.log(colors.green(`✓ update ${name} to branch ${branch}`)))
@@ -97,10 +99,10 @@ const openRepository = function (name, path) {
 };
 
 const checkoutRepository = function (name, root, settings, options) {
-    const { noFetch, reset, lastTag } = options || {};
+    const { noFetch, reset, lastTag, https} = options || {};
     const pathToRepo = path.join(root, name);
     let url = settings.url;
-    if (options.https && settings.https) {
+    if (https && settings.https) {
         url = settings.https;
     }
     const promise = !fs.existsSync(pathToRepo) ? cloneRepository(name, pathToRepo, url) :
