@@ -68,18 +68,27 @@ const setHead = function (name, repository, settings, reset, lastTag, noFetch) {
             const promise = !noFetch ? repository.fetch() : Promise.resolve();
             return promise
                 .then(() => repository.checkout(settings.tag))
-                .then(() => console.log(colors.green(`✓ update ${name} to tag ${settings.tag}`)));
+                .then(
+                    () => console.log(colors.green(`✓ update ${name} to tag ${settings.tag}`)),
+                    () => console.error(colors.red(`✗ tag ${settings.tag} does not exist in ${name}`))
+                );
         } else {
             const branch = settings.branch || 'master';
-            return repository.checkout(branch)
-                .then(() => {
-                    if (!noFetch) {
-                        return repository.pull('origin', branch, ['rebase']);
-                    }
-                })
-                .then(() => console.log(colors.green(`✓ update ${name} to branch ${branch}`)))
-                .catch(() => console.error(
-                    colors.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)));
+            const promise = !noFetch ? repository.fetch() : Promise.resolve();
+            return promise.then(() => {
+                return repository.checkout(branch)
+                    .then(() => {
+                        if (!noFetch) {
+                            return repository.pull('origin', branch, ['rebase'])
+                            .catch(() => console.error(
+                                colors.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)));
+                        }
+                    })
+                    .then(
+                        () => console.log(colors.green(`✓ update ${name} to branch ${branch}`)),
+                        () => console.error(colors.red(`✗ branch ${branch} does not exist in ${name}`))
+                    );
+            });
         }
     });
 };
