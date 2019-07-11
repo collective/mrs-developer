@@ -104,7 +104,7 @@ const openRepository = function (name, path) {
                 throw ('No repo');
             }
         })
-        .catch(() => console.error(colors.red(`Cannot open ${path}`, err)));
+        .catch(err => console.error(colors.red(`Cannot open ${path}`, err)));
 };
 
 const checkoutRepository = function (name, root, settings, options) {
