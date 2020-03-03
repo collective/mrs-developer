@@ -81,6 +81,11 @@ $ missdev --https
 ```
 will use the `https` entry (if it exists) instead of the `url` entry for each repository
 
+```
+$ missdev --default-to-master
+```
+will checkout the master bramch if the requested branch or tag does no exist in the repository.
+
 ## Config file structure
 
 The entry key is used to name the folder where we checkout the repository in `./src/develop`.
