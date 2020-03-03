@@ -45,7 +45,7 @@ const cloneRepository = function (name, path, url) {
 };
 
 
-const setHead = function (name, repository, settings, reset, lastTag, noFetch) {
+const setHead = function (name, repository, settings, reset, lastTag, noFetch, defaultToMaster) {
     let promise;
     if (reset) {
         promise = repository.reset('hard').then(() => console.log(colors.yellow.inverse(`Hard reset in ${name}.`)));
@@ -70,7 +70,12 @@ const setHead = function (name, repository, settings, reset, lastTag, noFetch) {
                 .then(() => repository.checkout(settings.tag))
                 .then(
                     () => console.log(colors.green(`✓ update ${name} to tag ${settings.tag}`)),
-                    () => console.error(colors.red(`✗ tag ${settings.tag} does not exist in ${name}`))
+                    () => {
+                        console.error(colors.red(`✗ tag ${settings.tag} does not exist in ${name}`));
+                        if (defaultToMaster) {
+                            repository.checkout('master').then(() => console.log(colors.yellow(`✓ update ${name} to master instead of ${settings.tag}`)));
+                        }
+                    }
                 );
         } else {
             const branch = settings.branch || 'master';
@@ -86,7 +91,12 @@ const setHead = function (name, repository, settings, reset, lastTag, noFetch) {
                     })
                     .then(
                         () => console.log(colors.green(`✓ update ${name} to branch ${branch}`)),
-                        () => console.error(colors.red(`✗ branch ${branch} does not exist in ${name}`))
+                        () => {
+                            console.error(colors.red(`✗ branch ${branch} does not exist in ${name}`));
+                            if (defaultToMaster) {
+                                repository.checkout('master').then(() => console.log(colors.yellow(`✓ update ${name} to master instead of ${branch}`)));
+                            }
+                        }
                     );
             });
         }
@@ -108,7 +118,7 @@ const openRepository = function (name, path) {
 };
 
 const checkoutRepository = function (name, root, settings, options) {
-    const { noFetch, reset, lastTag, https} = options || {};
+    const { noFetch, reset, lastTag, https, defaultToMaster } = options || {};
     const pathToRepo = path.join(root, name);
     let url = settings.url;
     if (https && settings.https) {
@@ -118,9 +128,12 @@ const checkoutRepository = function (name, root, settings, options) {
         openRepository(name, pathToRepo);
     return promise.then(git => {
         if (!!git) {
-            return setHead(name, git, settings, reset, lastTag, noFetch)
+            return setHead(name, git, settings, reset, lastTag, noFetch, defaultToMaster)
                 .then(() => git.log())
-                .then(commits => commits.latest.refs.split('tag: ').reverse()[0]);
+                .then(commits => {
+                    const tags = commits.latest.refs.split(', ').filter(ref => ref.includes('tag: '));
+                    return tags.length > 0 ? tags[0].slice(5) : '';
+                });
         } else {
             console.error(colors.red(`Cannot checkout ${name}`))
         }

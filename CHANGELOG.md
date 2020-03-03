@@ -1,3 +1,8 @@
+# 1.1.4 (2019-03-3)
+
+- Fix `--last-tag` option
+- Add `--default-to-master` option
+
 # 1.1.3 (2019-06-26)
 
 - Display error properly
