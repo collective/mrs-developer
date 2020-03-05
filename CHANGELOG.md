@@ -1,3 +1,7 @@
+# 1.1.6 (2019-03-05)
+
+- Fix typo in command options
+
 # 1.1.5 (2019-03-05)
 
 - Add `--all-master` option

@@ -15,4 +15,4 @@ const allMaster = args.indexOf('--all-master') > -1;
 const outputArg = args.find(function(arg) {return arg.startsWith('--output')});
 const output = outputArg && outputArg.split('=')[1];
 
-develop({noFetch, configFile, noConfig, output, reset, lastTag, https, defaultToMaster, allmMster});
+develop({noFetch, configFile, noConfig, output, reset, lastTag, https, defaultToMaster, allMaster});
