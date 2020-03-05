@@ -45,7 +45,8 @@ const cloneRepository = function (name, path, url) {
 };
 
 
-const setHead = function (name, repository, settings, reset, lastTag, noFetch, defaultToMaster) {
+const setHead = function (name, repository, settings, options) {
+    const { reset, lastTag, noFetch, defaultToMaster, allMaster } = options || {};
     let promise;
     if (reset) {
         promise = repository.reset('hard').then(() => console.log(colors.yellow.inverse(`Hard reset in ${name}.`)));
@@ -64,21 +65,21 @@ const setHead = function (name, repository, settings, reset, lastTag, noFetch, d
             return { abort: true };
         } else if (lastTag) {
             return repository.checkoutLatestTag();
-        } else if (settings.tag) {
+        } else if (!allMaster && settings.tag) {
             const promise = !noFetch ? repository.fetch() : Promise.resolve();
             return promise
                 .then(() => repository.checkout(settings.tag))
                 .then(
                     () => console.log(colors.green(`✓ update ${name} to tag ${settings.tag}`)),
                     () => {
-                        console.error(colors.red(`✗ tag ${settings.tag} does not exist in ${name}`));
+                        console.error(colors.red(`✗ tag ${settings.tag} does not exist in ${name} ${defaultToMaster}`));
                         if (defaultToMaster) {
                             repository.checkout('master').then(() => console.log(colors.yellow(`✓ update ${name} to master instead of ${settings.tag}`)));
                         }
                     }
                 );
         } else {
-            const branch = settings.branch || 'master';
+            const branch = !allMaster ? (settings.branch || 'master') : 'master';
             const promise = !noFetch ? repository.fetch() : Promise.resolve();
             return promise.then(() => {
                 return repository.checkout(branch)
@@ -118,7 +119,7 @@ const openRepository = function (name, path) {
 };
 
 const checkoutRepository = function (name, root, settings, options) {
-    const { noFetch, reset, lastTag, https, defaultToMaster } = options || {};
+    const { noFetch, reset, lastTag, https, defaultToMaster, allMaster } = options || {};
     const pathToRepo = path.join(root, name);
     let url = settings.url;
     if (https && settings.https) {
@@ -128,7 +129,7 @@ const checkoutRepository = function (name, root, settings, options) {
         openRepository(name, pathToRepo);
     return promise.then(git => {
         if (!!git) {
-            return setHead(name, git, settings, reset, lastTag, noFetch, defaultToMaster)
+            return setHead(name, git, settings, {reset, lastTag, noFetch, defaultToMaster, allMaster})
                 .then(() => git.log())
                 .then(commits => {
                     const tags = commits.latest.refs.split(', ').filter(ref => ref.includes('tag: '));

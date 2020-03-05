@@ -84,7 +84,12 @@ will use the `https` entry (if it exists) instead of the `url` entry for each re
 ```
 $ missdev --default-to-master
 ```
-will checkout the master bramch if the requested branch or tag does no exist in the repository.
+will checkout the master branch if the requested branch or tag does no exist in the repository.
+
+```
+$ missdev --all-master
+```
+will checkout the master branch even though another branch or tag is mentioned in `mrs.developer.json`.
 
 ## Config file structure
 

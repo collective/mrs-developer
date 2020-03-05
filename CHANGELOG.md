@@ -1,4 +1,8 @@
-# 1.1.4 (2019-03-3)
+# 1.1.5 (2019-03-05)
+
+- Add `--all-master` option
+
+# 1.1.4 (2019-03-03)
 
 - Fix `--last-tag` option
 - Add `--default-to-master` option
