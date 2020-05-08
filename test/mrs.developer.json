@@ -11,5 +11,12 @@
         "path": "lib/core",
         "url": "./test/fake-remote/repo1",
         "tag": "1.0.0"
+    },
+    "repo4": {
+        "url": "./test/fake-remote/repo1",
+        "packages": {
+            "@test/forms": "lib/forms",
+            "@test/buttons": "lib/buttons"
+        }
     }
 }

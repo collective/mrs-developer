@@ -1,12 +1,16 @@
-# 1.1.6 (2019-03-05)
+# 1.2.0 (2020-05-08)
+
+- Support for mono-repositories
+
+# 1.1.6 (2020-03-05)
 
 - Fix typo in command options
 
-# 1.1.5 (2019-03-05)
+# 1.1.5 (2020-03-05)
 
 - Add `--all-master` option
 
-# 1.1.4 (2019-03-03)
+# 1.1.4 (2020-03-03)
 
 - Fix `--last-tag` option
 - Add `--default-to-master` option

@@ -13,6 +13,12 @@
             ],
             "repo3": [
                 "develop/repo3/lib/core"
+            ],
+            "@test/forms": [
+                "develop/repo4/lib/forms"
+            ],
+            "@test/buttons": [
+                "develop/repo4/lib/buttons"
             ]
         },
         "baseUrl": "src"
