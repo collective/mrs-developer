@@ -34,6 +34,7 @@ describe('develop', () => {
         expect(config.compilerOptions.paths.repo1[0]).to.be.equal('develop/repo1');
         expect(config.compilerOptions.paths['@test/package2'][0]).to.be.equal('develop/repo2');
         expect(config.compilerOptions.paths.repo3[0]).to.be.equal('develop/repo3/lib/core');
+        expect(config.compilerOptions.paths['@test/forms'][0]).to.be.equal('develop/repo4/lib/forms');
     });
 
     it('updates mrs.developer.json with last tag', async () => {

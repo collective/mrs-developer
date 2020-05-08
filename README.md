@@ -14,7 +14,7 @@ The paths to those local checkouts are added in `tsconfig.json` (or any file abl
 
 Dependencies are listed in a file named `mrs.developer.json`:
 
-```
+```json
   {
         "ngx-tooltip": {
             "url": "https://github.com/pleerock/ngx-tooltip.git"
@@ -29,6 +29,19 @@ Dependencies are listed in a file named `mrs.developer.json`:
             "url": "git@github.com:plone/plone.restapi-angular.git",
             "https": "https://github.com/plone/plone.restapi-angular.git",
             "tag": "1.3.1"
+        }
+    }
+```
+
+It also support mono-repositories with the `packages` attribute providing a dictionnary of package ids / pathes:
+```json
+  {
+        "angular": {
+            "url": "https://github.com/angular/angular.git",
+            "packages": {
+                "@angular/core": "/packages/core",
+                "@angular/forms": "/packages/forms"
+            }
         }
     }
 ```

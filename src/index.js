@@ -154,12 +154,14 @@ const develop = async function develop(options) {
         if (options.lastTag) {
             pkgs[name].tag = res;
         }
-        const packageId = settings.package || name;
-        let packagePath = path.join('.', options.output || DEVELOP_DIRECTORY, name);
-        if (settings.path) {
-            packagePath = path.join(packagePath, settings.path);
-        }
-        paths[packageId] = [packagePath.replace(/\\/g, '/')]; // we do not want Windows separators here
+        const packages = settings.packages || {[settings.package || name]: settings.path};
+        Object.entries(packages).forEach(([packageId, subPath]) => {
+            let packagePath = path.join('.', options.output || DEVELOP_DIRECTORY, name);
+            if (subPath) {
+                packagePath = path.join(packagePath, subPath);
+            }
+            paths[packageId] = [packagePath.replace(/\\/g, '/')]; // we do not want Windows separators here
+        });
     }
 
     if (!options.noConfig) {
