@@ -37,6 +37,14 @@ describe('develop', () => {
         expect(config.compilerOptions.paths['@test/forms'][0]).to.be.equal('develop/repo4/lib/forms');
     });
 
+    it('updates tsconfig.json with local paths', async () => {
+		await developer.develop({root: './test'});
+        const raw = fs.readFileSync('./test/tsconfig.json');
+        const config = JSON.parse(raw);
+        expect(config.compilerOptions.baseUrl).to.be.equal('src');
+        expect(config.compilerOptions.paths.local1[0]).to.be.equal('some/path');
+    });
+
     it('updates mrs.developer.json with last tag', async () => {
         await exec('cp ./test/mrs.developer.json ./test/mrs.developer.json.bak');
         await exec('./test/test-create-tags.sh');

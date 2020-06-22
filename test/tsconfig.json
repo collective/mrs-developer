@@ -19,6 +19,9 @@
             ],
             "@test/buttons": [
                 "develop/repo4/lib/buttons"
+            ],
+            "local1": [
+                "some/path"
             ]
         },
         "baseUrl": "src"
