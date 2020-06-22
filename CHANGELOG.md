@@ -1,3 +1,7 @@
+# 1.3.0 (2020-06-22)
+
+- Support local paths to be added in tsconfig.json
+
 # 1.2.0 (2020-05-08)
 
 - Support for mono-repositories

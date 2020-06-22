@@ -46,6 +46,15 @@ It also support mono-repositories with the `packages` attribute providing a dict
     }
 ```
 
+By using the `local` property, we can declare a path that will be added in `tsconfig.json` (no repository will be pulled):
+```json
+   {
+        "my-package": {
+            "local": "lib/my/package"
+        }
+    }
+```
+
 By running the `missdev` command, those repositories will be checked out in the `./src/develop` folder and they will be added into the `tsconfig.json` file in the `paths` property, so the compiler will use them instead of the `node_modules` ones.
 
 Note: it also sets the `baseUrl` value to `"src"`.

@@ -18,5 +18,8 @@
             "@test/forms": "lib/forms",
             "@test/buttons": "lib/buttons"
         }
+    },
+    "local1": {
+        "local": "some/path"
     }
 }

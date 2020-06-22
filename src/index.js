@@ -150,18 +150,22 @@ const develop = async function develop(options) {
     // Checkout the repos.
     for (let name in pkgs) {
         const settings = pkgs[name];
-        const res = await checkoutRepository(name, repoDir, settings, options);
-        if (options.lastTag) {
-            pkgs[name].tag = res;
-        }
-        const packages = settings.packages || {[settings.package || name]: settings.path};
-        Object.entries(packages).forEach(([packageId, subPath]) => {
-            let packagePath = path.join('.', options.output || DEVELOP_DIRECTORY, name);
-            if (subPath) {
-                packagePath = path.join(packagePath, subPath);
+        if (!settings.local) {
+            const res = await checkoutRepository(name, repoDir, settings, options);
+            if (options.lastTag) {
+                pkgs[name].tag = res;
             }
-            paths[packageId] = [packagePath.replace(/\\/g, '/')]; // we do not want Windows separators here
-        });
+            const packages = settings.packages || {[settings.package || name]: settings.path};
+            Object.entries(packages).forEach(([packageId, subPath]) => {
+                let packagePath = path.join('.', options.output || DEVELOP_DIRECTORY, name);
+                if (subPath) {
+                    packagePath = path.join(packagePath, subPath);
+                }
+                paths[packageId] = [packagePath.replace(/\\/g, '/')]; // we do not want Windows separators here
+            });
+        } else {
+            paths[settings.package || name] = [settings.local];
+        }
     }
 
     if (!options.noConfig) {
