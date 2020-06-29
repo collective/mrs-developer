@@ -170,11 +170,21 @@ const develop = async function develop(options) {
 
     if (!options.noConfig) {
         // update paths in configFile
-        const configFile = options.configFile || 'tsconfig.json';
+        const defaultConfigFile = fs.existsSync('./tsconfig.base.json') ? 'tsconfig.base.json' : 'tsconfig.json';
+        const configFile = options.configFile || defaultConfigFile;
         const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
-        tsconfig.compilerOptions.paths = paths;
-        tsconfig.compilerOptions.baseUrl = 'src';
-        console.log(colors.yellow(`Update paths in tsconfig.json\n`));
+        const baseUrl = tsconfig.compilerOptions.baseUrl;
+        const nonDevelop = Object.entries(tsconfig.compilerOptions.paths || {})
+            .filter(([pkg, path]) => !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`))
+            .reduce((acc, [pkg, path]) => {
+                acc[pkg] = path;
+                return acc;
+            }, {});
+        tsconfig.compilerOptions.paths = Object.entries(paths).reduce((acc, [pkg, path]) => {
+            acc[pkg] = baseUrl === 'src' ? path : [`src/${path[0]}`];
+            return acc;
+        }, nonDevelop);
+        console.log(colors.yellow(`Update paths in ${defaultConfigFile}\n`));
         fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
     }
     // update mrs.developer.json with last tag if needed

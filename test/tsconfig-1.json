@@ -5,25 +5,28 @@
         "strict": true,
         "esModuleInterop": true,
         "paths": {
+            "something": [
+                "dist/something"
+            ],
             "local1": [
-                "some/path"
+                "src/some/path"
             ],
             "repo1": [
-                "develop/repo1"
+                "src/develop/repo1"
             ],
             "@test/package2": [
-                "develop/repo2"
+                "src/develop/repo2"
             ],
             "repo3": [
-                "develop/repo3/lib/core"
+                "src/develop/repo3/lib/core"
             ],
             "@test/forms": [
-                "develop/repo4/lib/forms"
+                "src/develop/repo4/lib/forms"
             ],
             "@test/buttons": [
-                "develop/repo4/lib/buttons"
+                "src/develop/repo4/lib/buttons"
             ]
         },
-        "baseUrl": "src"
+        "baseUrl": "./"
     }
 }
