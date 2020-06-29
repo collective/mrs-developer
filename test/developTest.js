@@ -41,10 +41,9 @@ describe('develop', () => {
 		await developer.develop({root: './test'});
         const raw = fs.readFileSync('./test/tsconfig.json');
         const config = JSON.parse(raw);
-        expect(config.compilerOptions.baseUrl).to.be.equal('src');
         expect(config.compilerOptions.paths.local1[0]).to.be.equal('some/path');
     });
-
+    
     it('updates mrs.developer.json with last tag', async () => {
         await exec('cp ./test/mrs.developer.json ./test/mrs.developer.json.bak');
         await exec('./test/test-create-tags.sh');
@@ -53,6 +52,20 @@ describe('develop', () => {
         const config = JSON.parse(raw);
         expect(config.repo1.tag).to.be.equal('1.0.11');
         await exec('mv ./test/mrs.developer.json.bak ./test/mrs.developer.json');
+    });
+
+    it('preserves baseUrl', async () => {
+		await developer.develop({root: './test', configFile: 'tsconfig-1.json'});
+        const raw = fs.readFileSync('./test/tsconfig-1.json');
+        const config = JSON.parse(raw);
+        expect(config.compilerOptions.baseUrl).to.be.equal('./');
+    });
+
+    it('preserves existing paths outside src/develop', async () => {
+		await developer.develop({root: './test', configFile: 'tsconfig-1.json'});
+        const raw = fs.readFileSync('./test/tsconfig-1.json');
+        const config = JSON.parse(raw);
+        expect(config.compilerOptions.paths.something[0]).to.be.equal('dist/something');
     });
 
 	afterEach(async () => {

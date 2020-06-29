@@ -1,3 +1,9 @@
+# 1.4.0 (2020-06-29)
+
+- Use tsconfig.base.json by default if it exists
+- Do not enforce baseUrl to ./src
+- Preserve existing paths (if not in src/develop)
+
 # 1.3.0 (2020-06-22)
 
 - Support local paths to be added in tsconfig.json

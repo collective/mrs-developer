@@ -10,7 +10,7 @@ It allows to replace any given dependency with a checkout from its Git repositor
 
 ![screenshot](https://raw.githubusercontent.com/collective/mrs-developer/master/docs/mrs-developer.jpeg "Console screenshot")
 
-The paths to those local checkouts are added in `tsconfig.json` (or any file able to override `node_modules` packages by providing custom paths).
+The paths to those local checkouts are added in `tsconfig.json` or in `tsconfig.base.json` if it exists (or `jsconfig.json` if we don't use TypeScript).
 
 Dependencies are listed in a file named `mrs.developer.json`:
 
@@ -33,7 +33,7 @@ Dependencies are listed in a file named `mrs.developer.json`:
     }
 ```
 
-It also support mono-repositories with the `packages` attribute providing a dictionnary of package ids / pathes:
+It also supports mono-repositories with the `packages` attribute providing a dictionnary of package ids / pathes:
 ```json
   {
         "angular": {
@@ -57,7 +57,7 @@ By using the `local` property, we can declare a path that will be added in `tsco
 
 By running the `missdev` command, those repositories will be checked out in the `./src/develop` folder and they will be added into the `tsconfig.json` file in the `paths` property, so the compiler will use them instead of the `node_modules` ones.
 
-Note: it also sets the `baseUrl` value to `"src"`.
+Existing `paths` entries will be preserved if they do not parget a folder located in `src/develop`.
 
 ## Usage
 
