@@ -27,6 +27,18 @@ describe('cloneRepository', () => {
 		expect(remotes[0].name).to.be.equal('origin');
 	});
 
+    it('sets separate fetch and push urls correctly', async () => {
+        const repo = await developer.cloneRepository(
+			'repo1',
+			'./test/src/develop/repo1',
+            './test/fake-push-remote/repo1',
+            './test/fake-remote/repo1'
+        );
+        const remotes = await repo.getRemotes(true);
+        expect(remotes[0].refs.fetch).to.contain('./test/fake-remote/repo1');
+        expect(remotes[0].refs.push).to.contain('./test/fake-push-remote/repo1');
+    });
+
 	afterEach(async () => {
         await exec('./test/test-clean.sh');
 	});

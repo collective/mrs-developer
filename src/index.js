@@ -28,11 +28,18 @@ const getRepoDir = function (root, output) {
     return repoDir;
 };
 
-const cloneRepository = function (name, path, url) {
+const cloneRepository = function (name, path, url, fetchUrl) {
     fs.mkdirSync(path);
     const git = gitP(path);
     return git.init()
-        .then(() => git.addRemote('origin', getRemotePath(url)))
+        .then(() => {
+            if (fetchUrl) {
+                return git.remote(['add', 'origin', getRemotePath(fetchUrl)])
+                    .then(() => git.remote(['set-url', '--push', 'origin', getRemotePath(url)]));
+            } else {
+                return git.remote(['add', 'origin', getRemotePath(url)]);
+            }
+        })
         .then(() => {
             console.log(`Cloning ${name} from ${url}...`);
             return git.fetch();
@@ -119,13 +126,16 @@ const openRepository = function (name, path) {
 };
 
 const checkoutRepository = function (name, root, settings, options) {
-    const { noFetch, reset, lastTag, https, defaultToMaster, allMaster } = options || {};
+    const { noFetch, reset, lastTag, https, fetchHttps, defaultToMaster, allMaster } = options || {};
     const pathToRepo = path.join(root, name);
     let url = settings.url;
+    let fetchUrl;
     if (https && settings.https) {
         url = settings.https;
+    } else if (fetchHttps && settings.https) {
+        fetchUrl = settings.https;
     }
-    const promise = !fs.existsSync(pathToRepo) ? cloneRepository(name, pathToRepo, url) :
+    const promise = !fs.existsSync(pathToRepo) ? cloneRepository(name, pathToRepo, url, fetchUrl) :
         openRepository(name, pathToRepo);
     return promise.then(git => {
         if (!!git) {
