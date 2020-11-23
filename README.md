@@ -104,6 +104,11 @@ $ missdev --https
 will use the `https` entry (if it exists) instead of the `url` entry for each repository
 
 ```
+$ missdev --fetch-https
+```
+will use the `https` entry (if it exists) instead of the `url` entry for each repository, ONLY for the fetch remote
+
+```
 $ missdev --default-to-master
 ```
 will checkout the master branch if the requested branch or tag does no exist in the repository.

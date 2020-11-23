@@ -24,6 +24,19 @@ describe('checkoutRepository', () => {
         const commits = await repo.log();
 		expect(commits.latest.message).to.be.equal('Modify file 1');
     });
+
+    it('sets separate fetch and push urls correctly', async () => {
+        await developer.checkoutRepository('repo1', './test/src/develop', {
+            url: './test/fake-push-remote/repo1',
+            https: './test/fake-remote/repo1',
+        }, {
+            fetchHttps: true,
+        });
+        const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+        const remotes = await repo.getRemotes(true);
+        expect(remotes[0].refs.fetch).to.contain('./test/fake-remote/repo1');
+        expect(remotes[0].refs.push).to.contain('./test/fake-push-remote/repo1');
+    });
     
     it('fetchs last changes if repository exists', async () => {
 		await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
