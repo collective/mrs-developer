@@ -1,3 +1,7 @@
+# 1.5.0 (2020-11-23)
+
+- Added the option to separate fetch and push urls
+
 # 1.4.0 (2020-06-29)
 
 - Use tsconfig.base.json by default if it exists
