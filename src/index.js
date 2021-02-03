@@ -48,7 +48,7 @@ const cloneRepository = function (name, path, url, fetchUrl) {
             console.log(colors.green(`✓ cloned ${name} at ${path}`));
             return git;
         })
-        .catch(err => console.error(colors.red(`Cannot clone ${url}`, err)))
+        .catch(err => console.error(colors.red(`Cannot clone ${url}`, err)));
 };
 
 
@@ -93,8 +93,8 @@ const setHead = function (name, repository, settings, options) {
                     .then(() => {
                         if (!noFetch) {
                             return repository.pull('origin', branch, ['rebase'])
-                            .catch(() => console.error(
-                                colors.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)));
+                                .catch(() => console.error(
+                                    colors.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)));
                         }
                     })
                     .then(
@@ -138,7 +138,7 @@ const checkoutRepository = function (name, root, settings, options) {
     const promise = !fs.existsSync(pathToRepo) ? cloneRepository(name, pathToRepo, url, fetchUrl) :
         openRepository(name, pathToRepo);
     return promise.then(git => {
-        if (!!git) {
+        if (git) {
             return setHead(name, git, settings, {reset, lastTag, noFetch, defaultToMaster, allMaster})
                 .then(() => git.log())
                 .then(commits => {
@@ -146,7 +146,7 @@ const checkoutRepository = function (name, root, settings, options) {
                     return tags.length > 0 ? tags[0].slice(5) : '';
                 });
         } else {
-            console.error(colors.red(`Cannot checkout ${name}`))
+            console.error(colors.red(`Cannot checkout ${name}`));
         }
     });
 };
@@ -157,9 +157,16 @@ const develop = async function develop(options) {
     const pkgs = JSON.parse(raw);
     const repoDir = getRepoDir(options.root, options.output);
     const paths = {};
+
+    const developPackages = [];
+
     // Checkout the repos.
     for (let name in pkgs) {
+
         const settings = pkgs[name];
+        if (settings.develop === false) continue;
+        developPackages.push(name);
+
         if (!settings.local) {
             const res = await checkoutRepository(name, repoDir, settings, options);
             if (options.lastTag) {
@@ -185,7 +192,8 @@ const develop = async function develop(options) {
         const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
         const baseUrl = tsconfig.compilerOptions.baseUrl;
         const nonDevelop = Object.entries(tsconfig.compilerOptions.paths || {})
-            .filter(([pkg, path]) => !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`))
+            .filter(([pkg]) => developPackages.includes(pkg))
+            .filter(([, path]) => !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`))
             .reduce((acc, [pkg, path]) => {
                 acc[pkg] = path;
                 return acc;
@@ -197,10 +205,11 @@ const develop = async function develop(options) {
         console.log(colors.yellow(`Update paths in ${defaultConfigFile}\n`));
         fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
     }
+
     // update mrs.developer.json with last tag if needed
     if (options.lastTag) {
         fs.writeFileSync(path.join(options.root || '.', 'mrs.developer.json'), JSON.stringify(pkgs, null, 4));
-        console.log(colors.yellow(`Update tags in mrs.developer.json\n`));
+        console.log(colors.yellow('Update tags in mrs.developer.json\n'));
     }
 };
 
