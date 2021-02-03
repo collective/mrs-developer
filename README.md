@@ -57,7 +57,18 @@ By using the `local` property, we can declare a path that will be added in `tsco
 
 By running the `missdev` command, those repositories will be checked out in the `./src/develop` folder and they will be added into the `tsconfig.json` file in the `paths` property, so the compiler will use them instead of the `node_modules` ones.
 
-Existing `paths` entries will be preserved if they do not parget a folder located in `src/develop`.
+Existing `paths` entries will be preserved if they do not target a folder located in `src/develop`.
+
+It is possible to keep a package in mrs-developer.json, but don't process it, by setting `develop: false`. This allows an easier development workflow of those packages, as they can be easier toggled between dev and released modes.
+
+```json
+   {
+        "my-package": {
+            "local": "lib/my/package",
+            "develop": false
+        }
+    }
+```
 
 ## Usage
 
