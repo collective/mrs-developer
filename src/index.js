@@ -48,7 +48,7 @@ const cloneRepository = function (name, path, url, fetchUrl) {
             console.log(colors.green(`✓ cloned ${name} at ${path}`));
             return git;
         })
-        .catch(err => console.error(colors.red(`Cannot clone ${url}`, err)))
+        .catch(err => console.error(colors.red(`Cannot clone ${url}`, err)));
 };
 
 
@@ -93,8 +93,8 @@ const setHead = function (name, repository, settings, options) {
                     .then(() => {
                         if (!noFetch) {
                             return repository.pull('origin', branch, ['rebase'])
-                            .catch(() => console.error(
-                                colors.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)));
+                                .catch(() => console.error(
+                                    colors.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)));
                         }
                     })
                     .then(
@@ -138,7 +138,7 @@ const checkoutRepository = function (name, root, settings, options) {
     const promise = !fs.existsSync(pathToRepo) ? cloneRepository(name, pathToRepo, url, fetchUrl) :
         openRepository(name, pathToRepo);
     return promise.then(git => {
-        if (!!git) {
+        if (git) {
             return setHead(name, git, settings, {reset, lastTag, noFetch, defaultToMaster, allMaster})
                 .then(() => git.log())
                 .then(commits => {
@@ -146,7 +146,7 @@ const checkoutRepository = function (name, root, settings, options) {
                     return tags.length > 0 ? tags[0].slice(5) : '';
                 });
         } else {
-            console.error(colors.red(`Cannot checkout ${name}`))
+            console.error(colors.red(`Cannot checkout ${name}`));
         }
     });
 };
@@ -179,7 +179,7 @@ const develop = async function develop(options) {
     }
 
     if (!options.noConfig) {
-        // update paths in configFile
+    // update paths in configFile
         const defaultConfigFile = fs.existsSync('./tsconfig.base.json') ? 'tsconfig.base.json' : 'tsconfig.json';
         const configFile = options.configFile || defaultConfigFile;
         const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
@@ -200,7 +200,7 @@ const develop = async function develop(options) {
     // update mrs.developer.json with last tag if needed
     if (options.lastTag) {
         fs.writeFileSync(path.join(options.root || '.', 'mrs.developer.json'), JSON.stringify(pkgs, null, 4));
-        console.log(colors.yellow(`Update tags in mrs.developer.json\n`));
+        console.log(colors.yellow('Update tags in mrs.developer.json\n'));
     }
 };
 

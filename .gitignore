@@ -7,3 +7,4 @@ src/develop
 /tsconfig.json
 /test/fake-remote
 /test/src
+*~
