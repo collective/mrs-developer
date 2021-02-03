@@ -1,7 +1,7 @@
-# 1.6.0 (unreleased)
+# 1.6.0 (2021-02-03)
 
 - Allow setting a package as non-develop by setting `"develop": false` in
-  mrs-developer.json, for any package configuration.  @tiberiuichim
+  mrs-developer.json, for any package configuration. @tiberiuichim
 
 # 1.5.0 (2020-11-23)
 
