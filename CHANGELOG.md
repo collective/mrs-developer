@@ -1,3 +1,8 @@
+# 1.6.0 (unreleased)
+
+- Allow setting a package as non-develop by setting `"develop": false` in
+  mrs-developer.json, for any package configuration.  @tiberiuichim
+
 # 1.5.0 (2020-11-23)
 
 - Added the option to separate fetch and push urls

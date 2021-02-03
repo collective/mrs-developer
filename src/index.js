@@ -157,9 +157,16 @@ const develop = async function develop(options) {
     const pkgs = JSON.parse(raw);
     const repoDir = getRepoDir(options.root, options.output);
     const paths = {};
+
+    const developPackages = [];
+
     // Checkout the repos.
     for (let name in pkgs) {
+
         const settings = pkgs[name];
+        if (settings.develop === false) continue;
+        developPackages.push(name);
+
         if (!settings.local) {
             const res = await checkoutRepository(name, repoDir, settings, options);
             if (options.lastTag) {
@@ -179,13 +186,14 @@ const develop = async function develop(options) {
     }
 
     if (!options.noConfig) {
-    // update paths in configFile
+        // update paths in configFile
         const defaultConfigFile = fs.existsSync('./tsconfig.base.json') ? 'tsconfig.base.json' : 'tsconfig.json';
         const configFile = options.configFile || defaultConfigFile;
         const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
         const baseUrl = tsconfig.compilerOptions.baseUrl;
         const nonDevelop = Object.entries(tsconfig.compilerOptions.paths || {})
-            .filter(([pkg, path]) => !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`))
+            .filter(([pkg]) => developPackages.includes(pkg))
+            .filter(([, path]) => !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`))
             .reduce((acc, [pkg, path]) => {
                 acc[pkg] = path;
                 return acc;
@@ -197,6 +205,7 @@ const develop = async function develop(options) {
         console.log(colors.yellow(`Update paths in ${defaultConfigFile}\n`));
         fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
     }
+
     // update mrs.developer.json with last tag if needed
     if (options.lastTag) {
         fs.writeFileSync(path.join(options.root || '.', 'mrs.developer.json'), JSON.stringify(pkgs, null, 4));
