@@ -140,6 +140,7 @@ Properties:
 - `url`: Mandatory. Git repository remote URL.
 - `branch`: Optional. Branch name, default to `master`. Ignored if `tag` is defined.
 - `tag`: Optional. Tag name.
+- `develop`: Optional. Boolean, can be toggled on/off to activate/deactivate a package. Default is true.
 
 ## Usage with React
 
