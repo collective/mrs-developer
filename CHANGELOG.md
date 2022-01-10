@@ -1,3 +1,7 @@
+# 1.6.1 (2022-01-10)
+
+- replace colors js mith chalk
+
 # 1.6.0 (2021-02-03)
 
 - Allow setting a package as non-develop by setting `"develop": false` in
