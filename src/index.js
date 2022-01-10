@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const colors = require('colors/safe');
+const chalk = require('chalk');
 const gitP = require('simple-git/promise');
 const currentPath = process.cwd();
 
@@ -45,10 +45,10 @@ const cloneRepository = function (name, path, url, fetchUrl) {
             return git.fetch();
         })
         .then(() => {
-            console.log(colors.green(`✓ cloned ${name} at ${path}`));
+            console.log(chalk.green(`✓ cloned ${name} at ${path}`));
             return git;
         })
-        .catch(err => console.error(colors.red(`Cannot clone ${url}`, err)));
+        .catch(err => console.error(chalk.red(`Cannot clone ${url}`, err)));
 };
 
 
@@ -56,11 +56,11 @@ const setHead = function (name, repository, settings, options) {
     const { reset, lastTag, noFetch, defaultToMaster, allMaster } = options || {};
     let promise;
     if (reset) {
-        promise = repository.reset('hard').then(() => console.log(colors.yellow.inverse(`Hard reset in ${name}.`)));
+        promise = repository.reset('hard').then(() => console.log(chalk.yellow.inverse(`Hard reset in ${name}.`)));
     } else {
         promise = repository.status().then(status => {
             if (status.files.length > 0) {
-                console.log(colors.yellow.inverse(`Cannot update ${name}. Commit your changes first.`));
+                console.log(chalk.yellow.inverse(`Cannot update ${name}. Commit your changes first.`));
                 return { abort: true };
             } else {
                 return {};
@@ -77,11 +77,11 @@ const setHead = function (name, repository, settings, options) {
             return promise
                 .then(() => repository.checkout(settings.tag))
                 .then(
-                    () => console.log(colors.green(`✓ update ${name} to tag ${settings.tag}`)),
+                    () => console.log(chalk.green(`✓ update ${name} to tag ${settings.tag}`)),
                     () => {
-                        console.error(colors.red(`✗ tag ${settings.tag} does not exist in ${name} ${defaultToMaster}`));
+                        console.error(chalk.red(`✗ tag ${settings.tag} does not exist in ${name} ${defaultToMaster}`));
                         if (defaultToMaster) {
-                            repository.checkout('master').then(() => console.log(colors.yellow(`✓ update ${name} to master instead of ${settings.tag}`)));
+                            repository.checkout('master').then(() => console.log(chalk.yellow(`✓ update ${name} to master instead of ${settings.tag}`)));
                         }
                     }
                 );
@@ -94,15 +94,15 @@ const setHead = function (name, repository, settings, options) {
                         if (!noFetch) {
                             return repository.pull('origin', branch, ['rebase'])
                                 .catch(() => console.error(
-                                    colors.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)));
+                                    chalk.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)));
                         }
                     })
                     .then(
-                        () => console.log(colors.green(`✓ update ${name} to branch ${branch}`)),
+                        () => console.log(chalk.green(`✓ update ${name} to branch ${branch}`)),
                         () => {
-                            console.error(colors.red(`✗ branch ${branch} does not exist in ${name}`));
+                            console.error(chalk.red(`✗ branch ${branch} does not exist in ${name}`));
                             if (defaultToMaster) {
-                                repository.checkout('master').then(() => console.log(colors.yellow(`✓ update ${name} to master instead of ${branch}`)));
+                                repository.checkout('master').then(() => console.log(chalk.yellow(`✓ update ${name} to master instead of ${branch}`)));
                             }
                         }
                     );
@@ -122,7 +122,7 @@ const openRepository = function (name, path) {
                 throw ('No repo');
             }
         })
-        .catch(err => console.error(colors.red(`Cannot open ${path}`, err)));
+        .catch(err => console.error(chalk.red(`Cannot open ${path}`, err)));
 };
 
 const checkoutRepository = function (name, root, settings, options) {
@@ -146,7 +146,7 @@ const checkoutRepository = function (name, root, settings, options) {
                     return tags.length > 0 ? tags[0].slice(5) : '';
                 });
         } else {
-            console.error(colors.red(`Cannot checkout ${name}`));
+            console.error(chalk.red(`Cannot checkout ${name}`));
         }
     });
 };
@@ -202,14 +202,14 @@ const develop = async function develop(options) {
             acc[pkg] = baseUrl === 'src' ? path : [`src/${path[0]}`];
             return acc;
         }, nonDevelop);
-        console.log(colors.yellow(`Update paths in ${defaultConfigFile}\n`));
+        console.log(chalk.yellow(`Update paths in ${defaultConfigFile}\n`));
         fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
     }
 
     // update mrs.developer.json with last tag if needed
     if (options.lastTag) {
         fs.writeFileSync(path.join(options.root || '.', 'mrs.developer.json'), JSON.stringify(pkgs, null, 4));
-        console.log(colors.yellow('Update tags in mrs.developer.json\n'));
+        console.log(chalk.yellow('Update tags in mrs.developer.json\n'));
     }
 };
 
