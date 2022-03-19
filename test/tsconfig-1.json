@@ -1,32 +1,18 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
-        "strict": true,
-        "esModuleInterop": true,
-        "paths": {
-            "something": [
-                "dist/something"
-            ],
-            "repo1": [
-                "src/develop/repo1"
-            ],
-            "@test/package2": [
-                "src/develop/repo2"
-            ],
-            "repo3": [
-                "src/develop/repo3/lib/core"
-            ],
-            "@test/forms": [
-                "src/develop/repo4/lib/forms"
-            ],
-            "@test/buttons": [
-                "src/develop/repo4/lib/buttons"
-            ],
-            "local1": [
-                "src/some/path"
-            ]
-        },
-        "baseUrl": "./"
-    }
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "paths": {
+      "something": ["dist/something"],
+      "repo1": ["src/develop/repo1"],
+      "@test/package2": ["src/develop/repo2"],
+      "repo3": ["src/develop/repo3/lib/core"],
+      "@test/forms": ["src/develop/repo4/lib/forms"],
+      "@test/buttons": ["src/develop/repo4/lib/buttons"],
+      "local1": ["src/some/path"]
+    },
+    "baseUrl": "./"
+  }
 }
