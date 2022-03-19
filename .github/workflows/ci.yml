@@ -12,6 +12,7 @@ jobs:
         with:
           node-version: 14.17
       - run: npm install
-      - run: npm run test
+      - run: git config --global init.defaultBranch master
+      - run: npm test
         env:
           CI: true
