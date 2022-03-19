@@ -5,8 +5,8 @@
         "strict": true,
         "esModuleInterop": true,
         "paths": {
-            "local1": [
-                "src/some/path"
+            "something": [
+                "dist/something"
             ],
             "repo1": [
                 "src/develop/repo1"
@@ -22,6 +22,9 @@
             ],
             "@test/buttons": [
                 "src/develop/repo4/lib/buttons"
+            ],
+            "local1": [
+                "src/some/path"
             ]
         },
         "baseUrl": "./"
