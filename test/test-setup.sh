@@ -7,6 +7,7 @@ mkdir fake-remote
 cd fake-remote
 git init repo1
 cd repo1
+git branch -m master
 echo "fffile 1" > file1.txt
 git add file1.txt
 git commit -am "Add file 1"

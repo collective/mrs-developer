@@ -1,3 +1,7 @@
+# 1.7.0 (2022-03-19)
+
+- Upgarde to simple-git 3.3.0 [ebrehault]
+
 # 1.6.1 (2022-01-10)
 
 - replace colors js mith chalk
