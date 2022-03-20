@@ -3,8 +3,7 @@
 const chai = require('chai');
 const developer = require('../src/index.js');
 const expect = chai.expect;
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
+const exec = require('child_process').execSync;
 const git = require('simple-git');
 
 describe('checkoutRepository', () => {

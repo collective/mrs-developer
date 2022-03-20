@@ -13,6 +13,8 @@ jobs:
           node-version: 14.17
       - run: npm install
       - run: git config --global init.defaultBranch master
+      - run: git config --global user.email "you@example.com"
+      - run: git config --global user.name "Your Name"
       - run: npm test
         env:
           CI: true

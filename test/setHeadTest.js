@@ -3,9 +3,8 @@
 const chai = require('chai');
 const developer = require('../src/index.js');
 const expect = chai.expect;
-const util = require('util');
 const fs = require('fs');
-const exec = util.promisify(require('child_process').exec);
+const exec = require('child_process').execSync;
 
 describe('setHead', () => {
   beforeEach(async () => {
@@ -76,6 +75,7 @@ describe('setHead', () => {
     expect(commits.latest.message).to.be.equal('fix quote');
     const txt = fs.readFileSync('./test/src/develop/repo1/file1.txt').toString();
     expect(txt).to.be.equal('File 1\nKnowledge is power\nFrance is bacon\nFrancis Bacon\n');
+    await exec('sleep 1');
   });
 
   it('does nothing if tag does not exist', async () => {
