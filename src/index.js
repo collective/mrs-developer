@@ -81,9 +81,9 @@ const setHead = function (name, repository, settings, options) {
       if (!allMaster && lastTag) {
         return fetchOrNot
           .then(() => repository.checkout('master'))
-          .catch((err) => {            
-            return repository.checkout('main'))
-          });
+          .catch((err) => {
+            return repository.checkout('main');
+          })
           .then(() => repository.checkoutLatestTag())
           .then(() => console.log(chalk.green(`✓ update ${name} to last tag`)));
       } else if (!allMaster && settings.tag) {
@@ -96,10 +96,10 @@ const setHead = function (name, repository, settings, options) {
               if (defaultToMaster) {
                 return repository
                   .checkout('master')
-                  .then(() => console.log(chalk.yellow(`✓ update ${name} to master instead of ${settings.tag}`)));
-                  .catch((err) => {            
-                    return repository.checkout('main'))
-                  });
+                  .then(() => console.log(chalk.yellow(`✓ update ${name} to master instead of ${settings.tag}`)))
+                  .catch((err) => {
+                    return repository.checkout('main');
+                  })
                   .then(() => console.log(chalk.yellow(`✓ update ${name} to main instead of ${settings.tag}`)));
               } else {
                 return Promise.resolve(true);
@@ -111,10 +111,10 @@ const setHead = function (name, repository, settings, options) {
         return fetchOrNot.then(() => {
           return repository
             .checkout(branch)
-            .catch((err) => {            
-              branch='main';
-              return repository.checkout(branch))
-            });
+            .catch((err) => {
+              branch = 'main';
+              return repository.checkout(branch);
+            })
             .then(() => {
               if (!noFetch) {
                 return repository
@@ -131,14 +131,16 @@ const setHead = function (name, repository, settings, options) {
               () => {
                 console.error(chalk.red(`✗ branch ${branch} does not exist in ${name}`));
                 if (defaultToMaster) {
-                  let defaultMasterBranch = 'master;'
+                  let defaultMasterBranch = 'master;';
                   return repository
                     .checkout('defaultMasterBranch')
-                    .catch((err) => {       
-                      defaultMasterBranch = 'main' ;                        
-                      return repository.checkout(defaultMasterBranch)
-                    });
-                    .then(() => console.log(chalk.yellow(`✓ update ${name} to ${defaultMasterBranch} instead of ${branch}`)));
+                    .catch((err) => {
+                      defaultMasterBranch = 'main';
+                      return repository.checkout(defaultMasterBranch);
+                    })
+                    .then(() =>
+                      console.log(chalk.yellow(`✓ update ${name} to ${defaultMasterBranch} instead of ${branch}`))
+                    );
                 }
               }
             );
