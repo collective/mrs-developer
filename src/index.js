@@ -53,7 +53,7 @@ const cloneRepository = function (name, path, url, fetchUrl) {
     .catch((err) => {
       console.log(chalk.green(`!Cannot clone 'master' branch. Try to clone 'main' branch'...(${name} at ${path})`));
       return git.checkout('main');
-    });
+    })
     .then(() => gitP(path))
     .catch((err) => console.error(chalk.red(`Cannot clone ${url}`, err)));
 };
