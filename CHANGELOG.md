@@ -1,6 +1,10 @@
+# 1.7.1 (2022-03-22)
+
+- Use main branch when master is not available [giuliaghisini]
+
 # 1.7.0 (2022-03-19)
 
-- Upgarde to simple-git 3.3.0 [ebrehault]
+- Upgrade to simple-git 3.3.0 [ebrehault]
 
 # 1.6.1 (2022-01-10)
 

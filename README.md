@@ -142,6 +142,8 @@ $ missdev --all-master
 
 will checkout the master branch even though another branch or tag is mentioned in `mrs.developer.json`.
 
+Note: in all cases where missdev needs the `master` branch but it is not available, it will use `main` branch instead.
+
 ## Config file structure
 
 The entry key is used to name the folder where we checkout the repository in `./src/develop`.
