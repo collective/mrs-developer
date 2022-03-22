@@ -131,7 +131,7 @@ const setHead = function (name, repository, settings, options) {
                 if (defaultToMaster) {
                   let defaultMasterBranch = 'master';
                   return repository
-                    .checkout('defaultMasterBranch')
+                    .checkout(defaultMasterBranch)
                     .catch((err) => {
                       defaultMasterBranch = 'main';
                       return repository.checkout(defaultMasterBranch);
