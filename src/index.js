@@ -129,7 +129,7 @@ const setHead = function (name, repository, settings, options) {
               () => {
                 console.error(chalk.red(`✗ branch ${branch} does not exist in ${name}`));
                 if (defaultToMaster) {
-                  let defaultMasterBranch = 'master;';
+                  let defaultMasterBranch = 'master';
                   return repository
                     .checkout('defaultMasterBranch')
                     .catch((err) => {
