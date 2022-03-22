@@ -50,6 +50,12 @@ const cloneRepository = function (name, path, url, fetchUrl) {
       console.log(chalk.green(`✓ cloned ${name} at ${path}`));
       return git.checkout('master');
     })
+    .catch((err) => {
+      console.log(
+        chalk.green(`Cannot checkout 'master' branch. Trying to checkout 'main' branch'...(${name} at ${path})`)
+      );
+      return git.checkout('main');
+    })
     .then(() => gitP(path))
     .catch((err) => console.error(chalk.red(`Cannot clone ${url}`, err)));
 };
@@ -77,6 +83,7 @@ const setHead = function (name, repository, settings, options) {
       if (!allMaster && lastTag) {
         return fetchOrNot
           .then(() => repository.checkout('master'))
+          .catch((err) => repository.checkout('main'))
           .then(() => repository.checkoutLatestTag())
           .then(() => console.log(chalk.green(`✓ update ${name} to last tag`)));
       } else if (!allMaster && settings.tag) {
@@ -89,17 +96,25 @@ const setHead = function (name, repository, settings, options) {
               if (defaultToMaster) {
                 return repository
                   .checkout('master')
-                  .then(() => console.log(chalk.yellow(`✓ update ${name} to master instead of ${settings.tag}`)));
+                  .then(() => console.log(chalk.yellow(`✓ update ${name} to master instead of ${settings.tag}`)))
+                  .catch((err) => {
+                    return repository.checkout('main');
+                  })
+                  .then(() => console.log(chalk.yellow(`✓ update ${name} to main instead of ${settings.tag}`)));
               } else {
                 return Promise.resolve(true);
               }
             }
           );
       } else {
-        const branch = !allMaster ? settings.branch || 'master' : 'master';
+        let branch = !allMaster ? settings.branch || 'master' : 'master';
         return fetchOrNot.then(() => {
           return repository
             .checkout(branch)
+            .catch((err) => {
+              branch = 'main';
+              return repository.checkout(branch);
+            })
             .then(() => {
               if (!noFetch) {
                 return repository
@@ -116,9 +131,16 @@ const setHead = function (name, repository, settings, options) {
               () => {
                 console.error(chalk.red(`✗ branch ${branch} does not exist in ${name}`));
                 if (defaultToMaster) {
+                  let defaultMasterBranch = 'master';
                   return repository
-                    .checkout('master')
-                    .then(() => console.log(chalk.yellow(`✓ update ${name} to master instead of ${branch}`)));
+                    .checkout(defaultMasterBranch)
+                    .catch((err) => {
+                      defaultMasterBranch = 'main';
+                      return repository.checkout(defaultMasterBranch);
+                    })
+                    .then(() =>
+                      console.log(chalk.yellow(`✓ update ${name} to ${defaultMasterBranch} instead of ${branch}`))
+                    );
                 }
               }
             );

@@ -103,6 +103,17 @@ describe('setHead', () => {
     expect(commits.latest.message).to.be.equal('Add file 2');
   });
 
+  it('can default to main if default master does not exist', async () => {
+    await exec('./test/test-setup-main.sh');
+    await Promise.resolve(developer.getRepoDir('./test'));
+
+    await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
+    const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+    await developer.setHead('repo1', repo, {});
+    const status = await repo.status();
+    expect(status.current).to.be.equal('main');
+  });
+
   afterEach(async () => {
     await exec('./test/test-clean.sh');
   });
