@@ -81,9 +81,7 @@ const setHead = function (name, repository, settings, options) {
       if (!allMaster && lastTag) {
         return fetchOrNot
           .then(() => repository.checkout('master'))
-          .catch((err) => {
-            return repository.checkout('main');
-          })
+          .catch((err) => repository.checkout('main'))
           .then(() => repository.checkoutLatestTag())
           .then(() => console.log(chalk.green(`✓ update ${name} to last tag`)));
       } else if (!allMaster && settings.tag) {
