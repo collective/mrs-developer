@@ -1,3 +1,9 @@
+# 2.0.0 (unreleased)
+
+- Support default branch names other than master and main [davisagli]
+- Rename `--default-to-master` option to `--fallback-to-default-branch`
+- Rename `--all-master` option to `--force-default-branch`
+
 # 1.7.1 (2022-03-22)
 
 - Use main branch when master is not available [giuliaghisini]

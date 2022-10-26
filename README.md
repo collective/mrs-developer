@@ -4,7 +4,7 @@
 
 mrs-developer is an NodeJS utility that makes it easy to work with NPM projects containing lots of packages, of which you only want to develop some.
 
-Note: [mr-developer](https://github.com/collective/mr-developer) is mrs-developer's predecessor. It is now obsolete. mr-developer has a dependency to nodegit which is painful to install. mrs-developer depends on simple-git, which does not build the Git library (it just requires to have the git command avaialble in the environment).
+Note: [mr-developer](https://github.com/collective/mr-developer) is mrs-developer's predecessor. It is now obsolete. mr-developer has a dependency to nodegit which is painful to install. mrs-developer depends on simple-git, which does not build the Git library (it just requires to have the git command available in the environment).
 
 It allows to replace any given dependency with a checkout from its Git repository.
 
@@ -131,18 +131,16 @@ $ missdev --fetch-https
 will use the `https` entry (if it exists) instead of the `url` entry for each repository, ONLY for the fetch remote
 
 ```
-$ missdev --default-to-master
+$ missdev --fallback-to-default-branch
 ```
 
-will checkout the master branch if the requested branch or tag does no exist in the repository.
+will check out the default branch if the requested branch or tag does not exist in the repository.
 
 ```
-$ missdev --all-master
+$ missdev --force-default-branch
 ```
 
-will checkout the master branch even though another branch or tag is mentioned in `mrs.developer.json`.
-
-Note: in all cases where missdev needs the `master` branch but it is not available, it will use `main` branch instead.
+will check out the default branch even though another branch or tag is mentioned in `mrs.developer.json`.
 
 ## Config file structure
 
@@ -150,10 +148,10 @@ The entry key is used to name the folder where we checkout the repository in `./
 
 Properties:
 
-- `package`: Optional. Name of the package that will be mention in `paths`. If not provided, defauklt to entry key.
+- `package`: Optional. Name of the package that will be mention in `paths`. If not provided, default to entry key.
 - `path`: Optional. Source path in the repository. Will be concatenated to the local repository path in `tsconfig.json`.
 - `url`: Mandatory. Git repository remote URL.
-- `branch`: Optional. Branch name, default to `master`. Ignored if `tag` is defined.
+- `branch`: Optional. Branch name, defaults to the remote's default branch. Ignored if `tag` is defined.
 - `tag`: Optional. Tag name.
 - `develop`: Optional. Boolean, can be toggled on/off to activate/deactivate a package. Default is true.
 

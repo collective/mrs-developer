@@ -28,7 +28,7 @@ describe('setHead', () => {
     expect(commits.latest.message).to.be.equal('Add file 1');
   });
 
-  it('ignores branch if tag is mentionned', async () => {
+  it('ignores branch if tag is mentioned', async () => {
     await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
     const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
     await developer.setHead('repo1', repo, { branch: 'staging', tag: '1.0.0' });
@@ -71,7 +71,7 @@ describe('setHead', () => {
     const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
     await developer.setHead('repo1', repo, { tag: '1.0.0' }, { lastTag: true });
     const commits = await repo.log();
-    expect(commits.latest.refs).to.be.equal('HEAD -> master, tag: 1.0.10, origin/master');
+    expect(commits.latest.refs).to.be.equal('HEAD -> main, tag: 1.0.10, origin/main, origin/HEAD');
     expect(commits.latest.message).to.be.equal('fix quote');
     const txt = fs.readFileSync('./test/src/develop/repo1/file1.txt').toString();
     expect(txt).to.be.equal('File 1\nKnowledge is power\nFrance is bacon\nFrancis Bacon\n');
@@ -83,35 +83,24 @@ describe('setHead', () => {
     const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
     await developer.setHead('repo1', repo, { tag: '2.0.0' });
     const status = await repo.status();
-    expect(status.current).to.be.equal('master');
+    expect(status.current).to.be.equal('main');
   });
 
-  it('can default to master if tag does not exist', async () => {
+  it('can fall back to default branch if tag does not exist', async () => {
     await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
     const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
     await developer.setHead('repo1', repo, { branch: 'staging' });
-    await developer.setHead('repo1', repo, { tag: '2.0.0' }, { defaultToMaster: true });
-    const status = await repo.status();
-    expect(status.current).to.be.equal('master');
-  });
-
-  it('can force master with --all-master', async () => {
-    await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
-    const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
-    await developer.setHead('repo1', repo, { branch: 'staging' }, { allMaster: true });
-    const commits = await repo.log();
-    expect(commits.latest.message).to.be.equal('Add file 2');
-  });
-
-  it('can default to main if default master does not exist', async () => {
-    await exec('./test/test-setup-main.sh');
-    await Promise.resolve(developer.getRepoDir('./test'));
-
-    await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
-    const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
-    await developer.setHead('repo1', repo, {});
+    await developer.setHead('repo1', repo, { tag: '2.0.0' }, { fallbackToDefaultBranch: true });
     const status = await repo.status();
     expect(status.current).to.be.equal('main');
+  });
+
+  it('can force default branch with --force-default-branch', async () => {
+    await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
+    const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+    await developer.setHead('repo1', repo, { branch: 'staging' }, { forceDefaultBranch: true });
+    const commits = await repo.log();
+    expect(commits.latest.message).to.be.equal('Add file 2');
   });
 
   afterEach(async () => {
