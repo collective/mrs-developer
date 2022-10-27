@@ -1,4 +1,4 @@
-# 2.0.0 (unreleased)
+# 2.0.0 (2022-10-27)
 
 - Support default branch names other than master and main [davisagli]
 - Rename `--default-to-master` option to `--fallback-to-default-branch`
