@@ -4,10 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 const gitP = require('simple-git');
-
-const reflect = require( 'async/reflect');
-const parallel  = require('async/parallel');
-
 const currentPath = process.cwd();
 
 const DEVELOP_DIRECTORY = 'develop';
@@ -179,18 +175,11 @@ const checkoutRepository = function (name, root, settings, options) {
   });
 };
 
-const develop = async function develop(options) {
-  // Read in mrs.developer.json.
-  const raw = fs.readFileSync(path.join(options.root || '.', 'mrs.developer.json'));
-  const pkgs = JSON.parse(raw);
+async function developPackages(pkgs, options) {
   const repoDir = getRepoDir(options.root, options.output);
-  const paths = {};
-
   const developPackages = Object.keys(pkgs).filter(name => pkgs[name].develop);
+  const paths = [];
 
-  // paralel()
-
-  // Checkout the repos.
   for (let name of developPackages) {
     const pkg = pkgs[name];
 
@@ -212,30 +201,47 @@ const develop = async function develop(options) {
     }
   }
 
-  if (!options.noConfig) {
-    // update paths in configFile
-    const defaultConfigFile = fs.existsSync('./tsconfig.base.json') ? 'tsconfig.base.json' : 'tsconfig.json';
-    const configFile = options.configFile || defaultConfigFile;
-    const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
-    const baseUrl = tsconfig.compilerOptions.baseUrl;
-    const nonDevelop = Object.entries(tsconfig.compilerOptions.paths || {})
-      .filter(
-        ([pkg, path]) =>
-          !developPackages.includes(pkg) &&
+  return {paths, pkgs};
+}
+
+function writeConfigFile(paths, options) {
+  // update paths in configFile
+  const defaultConfigFile = fs.existsSync('./tsconfig.base.json') ? 'tsconfig.base.json' : 'tsconfig.json';
+  const configFile = options.configFile || defaultConfigFile;
+  const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
+  const baseUrl = tsconfig.compilerOptions.baseUrl;
+
+  const nonDevelop = Object.entries(tsconfig.compilerOptions.paths || {})
+    .filter(
+      ([pkg, path]) =>
+        !developPackages.includes(pkg) &&
           !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`)
-      )
-      .reduce((acc, [pkg, path]) => {
-        acc[pkg] = path;
-        return acc;
-      }, {});
-    const updates = Object.entries(paths).reduce((acc, [pkg, path]) => {
-      acc[pkg] = baseUrl === 'src' ? path : [`src/${path[0]}`];
+    )
+    .reduce((acc, [pkg, path]) => {
+      acc[pkg] = path;
       return acc;
     }, {});
-    tsconfig.compilerOptions.paths = { ...nonDevelop, ...updates };
-    console.log(chalk.yellow(`Update paths in ${defaultConfigFile}\n`));
-    fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
-  }
+
+  const updates = Object.entries(paths).reduce((acc, [pkg, path]) => {
+    acc[pkg] = baseUrl === 'src' ? path : [`src/${path[0]}`];
+    return acc;
+  }, {});
+
+  tsconfig.compilerOptions.paths = { ...nonDevelop, ...updates };
+  console.log(chalk.yellow(`Update paths in ${defaultConfigFile}\n`));
+  fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
+}
+
+const develop = async function develop(options) {
+  // Read in mrs.developer.json.
+  const raw = fs.readFileSync(path.join(options.root || '.', 'mrs.developer.json'));
+  const rawPkgs = JSON.parse(raw);
+
+  // Checkout the repos.
+  const {paths, pkgs} = await developPackages(rawPkgs, options);
+
+  if (!options.noConfig)
+    writeConfigFile(paths, options);
 
   // update mrs.developer.json with last tag if needed
   if (options.lastTag) {
@@ -247,7 +253,8 @@ const develop = async function develop(options) {
 module.exports = {
   cloneRepository,
   openRepository,
+  setHead,
   checkoutRepository,
   getRepoDir,
-  develop
+  develop,
 };
