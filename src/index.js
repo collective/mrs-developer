@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 const gitP = require('simple-git');
+const parallel = require('async/parallel');
+
 const currentPath = process.cwd();
 
 const DEVELOP_DIRECTORY = 'develop';
@@ -234,39 +236,80 @@ function checkoutRepository(name, root, settings, options) {
   });
 }
 
+async function developPackage(pkg, name, options, repoDir) {
+  console.log('develop package', name);
+  let gitTag;
+  const paths = {};
+
+  if (!pkg.local) {
+    gitTag = await checkoutRepository(name, repoDir, pkg, options);
+    const packages = pkg.packages || { [pkg.package || name]: pkg.path };
+    Object.entries(packages).forEach(([packageId, subPath]) => {
+      let packagePath = path.join(
+        '.',
+        options.output || DEVELOP_DIRECTORY,
+        name,
+      );
+      if (subPath) {
+        packagePath = path.join(packagePath, subPath);
+      }
+      paths[packageId] = [packagePath.replace(/\\/g, '/')]; // we do not want Windows separators here
+    });
+  } else {
+    paths[pkg.package || name] = [pkg.local];
+  }
+
+  return { gitTag, pkgPaths: paths, name };
+}
+
 async function developPackages(pkgs, options) {
   const repoDir = getRepoDir(options.root, options.output);
   const developedPackages = Object.keys(pkgs).filter(
     (name) => pkgs[name].develop ?? true,
   );
   const paths = {};
+  const tasks = developedPackages.map(
+    (name) => async () =>
+      await developPackage(pkgs[name], name, options, repoDir),
+  );
 
-  for (let name of developedPackages) {
-    const pkg = pkgs[name];
-
-    if (!pkg.local) {
-      const res = await checkoutRepository(name, repoDir, pkg, options);
+  await parallel(tasks, (err, results) => {
+    results.forEach(({ gitTag, pkgPaths, name }) => {
+      const pkg = pkgs[name];
       if (options.lastTag) {
-        pkgs[name].tag = res;
+        pkg.tag = gitTag;
       }
-      const packages = pkg.packages || { [pkg.package || name]: pkg.path };
-      Object.entries(packages).forEach(([packageId, subPath]) => {
-        let packagePath = path.join(
-          '.',
-          options.output || DEVELOP_DIRECTORY,
-          name,
-        );
-        if (subPath) {
-          packagePath = path.join(packagePath, subPath);
-        }
-        paths[packageId] = [packagePath.replace(/\\/g, '/')]; // we do not want Windows separators here
-      });
-    } else {
-      paths[pkg.package || name] = [pkg.local];
-    }
-  }
+      Object.assign(paths, pkgPaths);
+    });
+  });
 
   return { paths, pkgs, developedPackages };
+}
+
+async function develop(options) {
+  // Read in mrs.developer.json.
+  const raw = fs.readFileSync(
+    path.join(options.root || '.', 'mrs.developer.json'),
+  );
+  const rawPkgs = JSON.parse(raw);
+
+  // Checkout the repos.
+  const { paths, pkgs, developedPackages } = await developPackages(
+    rawPkgs,
+    options,
+  );
+  // console.log(paths, pkgs, developedPackages);
+
+  if (!options.noConfig) writeConfigFile(paths, options, developedPackages);
+
+  // update mrs.developer.json with last tag if needed
+  if (options.lastTag) {
+    fs.writeFileSync(
+      path.join(options.root || '.', 'mrs.developer.json'),
+      JSON.stringify(pkgs, null, 4),
+    );
+    console.log(chalk.yellow('Update tags in mrs.developer.json\n'));
+  }
 }
 
 function writeConfigFile(paths, options, developedPackages) {
@@ -306,31 +349,6 @@ function writeConfigFile(paths, options, developedPackages) {
     path.join(options.root || '.', configFile),
     JSON.stringify(tsconfig, null, 4),
   );
-}
-
-async function develop(options) {
-  // Read in mrs.developer.json.
-  const raw = fs.readFileSync(
-    path.join(options.root || '.', 'mrs.developer.json'),
-  );
-  const rawPkgs = JSON.parse(raw);
-
-  // Checkout the repos.
-  const { paths, pkgs, developedPackages } = await developPackages(
-    rawPkgs,
-    options,
-  );
-
-  if (!options.noConfig) writeConfigFile(paths, options, developedPackages);
-
-  // update mrs.developer.json with last tag if needed
-  if (options.lastTag) {
-    fs.writeFileSync(
-      path.join(options.root || '.', 'mrs.developer.json'),
-      JSON.stringify(pkgs, null, 4),
-    );
-    console.log(chalk.yellow('Update tags in mrs.developer.json\n'));
-  }
 }
 
 module.exports = {
