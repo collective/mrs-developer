@@ -361,4 +361,6 @@ module.exports = {
   checkoutRepository,
   getRepoDir,
   develop,
+  developPackage,
+  developPackages,
 };
