@@ -1,4 +1,4 @@
-# 2.0.1 (unreleased)
+# 2.1.0 (unreleased)
 
 - Parallelize the repository actions. For the case of large number of packages (ex: 40), there's a 20x speedup in operation [tiberiuichim]
 - Install Prettier, reformat code using Prettier [tiberiuichim]
