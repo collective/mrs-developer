@@ -185,7 +185,7 @@ function openRepository(name, path) {
         console.log(`Found ${name} at ${path}`);
         return Promise.resolve(true);
       } else {
-        throw 'No repo';
+        throw `No repo: ${name}`;
       }
     })
     .then(() => gitP(path))
@@ -237,7 +237,6 @@ function checkoutRepository(name, root, settings, options) {
 }
 
 async function developPackage(pkg, name, options, repoDir) {
-  console.log('develop package', name);
   let gitTag;
   const paths = {};
 
@@ -273,14 +272,19 @@ async function developPackages(pkgs, options) {
       await developPackage(pkgs[name], name, options, repoDir),
   );
 
-  await parallel(tasks, (err, results) => {
-    results.forEach(({ gitTag, pkgPaths, name }) => {
-      const pkg = pkgs[name];
-      if (options.lastTag) {
-        pkg.tag = gitTag;
-      }
-      Object.assign(paths, pkgPaths);
-    });
+  let results = [];
+  try {
+    results = await parallel(tasks);
+  } catch (err) {
+    console.log('Error:', err);
+  }
+
+  results.forEach(({ gitTag, pkgPaths, name }) => {
+    const pkg = pkgs[name];
+    if (options.lastTag) {
+      pkg.tag = gitTag;
+    }
+    Object.assign(paths, pkgPaths);
   });
 
   return { paths, pkgs, developedPackages };
@@ -298,7 +302,6 @@ async function develop(options) {
     rawPkgs,
     options,
   );
-  // console.log(paths, pkgs, developedPackages);
 
   if (!options.noConfig) writeConfigFile(paths, options, developedPackages);
 
@@ -344,7 +347,7 @@ function writeConfigFile(paths, options, developedPackages) {
   }, {});
 
   tsconfig.compilerOptions.paths = { ...nonDevelop, ...updates };
-  console.log(chalk.yellow(`Update paths in ${defaultConfigFile}\n`));
+  console.log(chalk.yellow(`Update paths in ${configFile}\n`));
   fs.writeFileSync(
     path.join(options.root || '.', configFile),
     JSON.stringify(tsconfig, null, 4),
