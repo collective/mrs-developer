@@ -8,15 +8,15 @@ const currentPath = process.cwd();
 
 const DEVELOP_DIRECTORY = 'develop';
 
-const getRemotePath = function (url) {
+function getRemotePath (url) {
   if (url.startsWith('.')) {
     return `${currentPath}/${url}`;
   } else {
     return url;
   }
-};
+}
 
-const getRepoDir = function (root, output) {
+function getRepoDir (root, output) {
   // Check for download directory; create if needed.
   const repoDir = path.join(root || '.', 'src', output || DEVELOP_DIRECTORY);
   if (!fs.existsSync(repoDir)) {
@@ -26,14 +26,14 @@ const getRepoDir = function (root, output) {
     console.log(`\nUsing ${repoDir}`);
   }
   return repoDir;
-};
+}
 
-const getDefaultBranch = function (repository) {
+function getDefaultBranch (repository) {
   return repository.revparse(['--abbrev-ref', 'origin/HEAD'])
     .then((result) => result.replace('origin/', ''));
-};
+}
 
-const cloneRepository = function (name, path, url, fetchUrl) {
+function cloneRepository (name, path, url, fetchUrl) {
   console.log(`Cloning ${name} from ${fetchUrl || url}...`);
   return gitP().clone(getRemotePath(fetchUrl || url), path)
     .then(() => {
@@ -46,9 +46,9 @@ const cloneRepository = function (name, path, url, fetchUrl) {
     })
     .then(() => gitP(path))
     .catch((err) => console.error(chalk.red(`Cannot clone ${fetchUrl || url}`, err)));
-};
+}
 
-const setHead = function (name, repository, settings, options) {
+function setHead (name, repository, settings, options) {
   const { reset, lastTag, noFetch, fallbackToDefaultBranch, forceDefaultBranch } = options || {};
   let promise;
   if (reset) {
@@ -129,9 +129,9 @@ const setHead = function (name, repository, settings, options) {
       }
     }
   });
-};
+}
 
-const openRepository = function (name, path) {
+function openRepository (name, path) {
   const git = gitP(path);
   return git
     .checkIsRepo()
@@ -145,9 +145,9 @@ const openRepository = function (name, path) {
     })
     .then(() => gitP(path))
     .catch((err) => console.error(chalk.red(`Cannot open ${path}`, err)));
-};
+}
 
-const checkoutRepository = function (name, root, settings, options) {
+function checkoutRepository(name, root, settings, options) {
   const { noFetch, reset, lastTag, https, fetchHttps, fallbackToDefaultBranch, forceDefaultBranch } = options || {};
   const pathToRepo = path.join(root, name);
   let url = settings.url;
@@ -173,14 +173,14 @@ const checkoutRepository = function (name, root, settings, options) {
       return Promise.resolve(false);
     }
   });
-};
+}
 
 async function developPackages(pkgs, options) {
   const repoDir = getRepoDir(options.root, options.output);
-  const developPackages = Object.keys(pkgs).filter(name => pkgs[name].develop);
-  const paths = [];
+  const developedPackages = Object.keys(pkgs).filter(name => pkgs[name].develop ?? true);
+  const paths = {};
 
-  for (let name of developPackages) {
+  for (let name of developedPackages) {
     const pkg = pkgs[name];
 
     if (!pkg.local) {
@@ -201,10 +201,10 @@ async function developPackages(pkgs, options) {
     }
   }
 
-  return {paths, pkgs};
+  return {paths, pkgs, developedPackages};
 }
 
-function writeConfigFile(paths, options) {
+function writeConfigFile(paths, options, developedPackages) {
   // update paths in configFile
   const defaultConfigFile = fs.existsSync('./tsconfig.base.json') ? 'tsconfig.base.json' : 'tsconfig.json';
   const configFile = options.configFile || defaultConfigFile;
@@ -214,7 +214,7 @@ function writeConfigFile(paths, options) {
   const nonDevelop = Object.entries(tsconfig.compilerOptions.paths || {})
     .filter(
       ([pkg, path]) =>
-        !developPackages.includes(pkg) &&
+        !developedPackages.includes(pkg) &&
           !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`)
     )
     .reduce((acc, [pkg, path]) => {
@@ -232,23 +232,23 @@ function writeConfigFile(paths, options) {
   fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
 }
 
-const develop = async function develop(options) {
+async function develop(options) {
   // Read in mrs.developer.json.
   const raw = fs.readFileSync(path.join(options.root || '.', 'mrs.developer.json'));
   const rawPkgs = JSON.parse(raw);
 
   // Checkout the repos.
-  const {paths, pkgs} = await developPackages(rawPkgs, options);
+  const {paths, pkgs, developedPackages} = await developPackages(rawPkgs, options);
 
   if (!options.noConfig)
-    writeConfigFile(paths, options);
+    writeConfigFile(paths, options, developedPackages);
 
   // update mrs.developer.json with last tag if needed
   if (options.lastTag) {
     fs.writeFileSync(path.join(options.root || '.', 'mrs.developer.json'), JSON.stringify(pkgs, null, 4));
     console.log(chalk.yellow('Update tags in mrs.developer.json\n'));
   }
-};
+}
 
 module.exports = {
   cloneRepository,

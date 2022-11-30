@@ -12,7 +12,7 @@ describe('develop', () => {
     await Promise.resolve(developer.getRepoDir('./test'));
   });
 
-  it('clones all the repositories indicated in mrs.developer.json', async () => {
+  it.only('clones all the repositories indicated in mrs.developer.json', async () => {
     await developer.develop({ root: './test' });
     const repo1 = await developer.openRepository('repo1', './test/src/develop/repo1');
     let commits = await repo1.log();
