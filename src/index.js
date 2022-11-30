@@ -4,6 +4,10 @@ const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 const gitP = require('simple-git');
+
+const reflect = require( 'async/reflect');
+const parallel  = require('async/parallel');
+
 const currentPath = process.cwd();
 
 const DEVELOP_DIRECTORY = 'develop';
@@ -182,20 +186,20 @@ const develop = async function develop(options) {
   const repoDir = getRepoDir(options.root, options.output);
   const paths = {};
 
-  const developPackages = [];
+  const developPackages = Object.keys(pkgs).filter(name => pkgs[name].develop);
+
+  // paralel()
 
   // Checkout the repos.
-  for (let name in pkgs) {
-    const settings = pkgs[name];
-    if (settings.develop === false) continue;
-    developPackages.push(name);
+  for (let name of developPackages) {
+    const pkg = pkgs[name];
 
-    if (!settings.local) {
-      const res = await checkoutRepository(name, repoDir, settings, options);
+    if (!pkg.local) {
+      const res = await checkoutRepository(name, repoDir, pkg, options);
       if (options.lastTag) {
         pkgs[name].tag = res;
       }
-      const packages = settings.packages || { [settings.package || name]: settings.path };
+      const packages = pkg.packages || { [pkg.package || name]: pkg.path };
       Object.entries(packages).forEach(([packageId, subPath]) => {
         let packagePath = path.join('.', options.output || DEVELOP_DIRECTORY, name);
         if (subPath) {
@@ -204,7 +208,7 @@ const develop = async function develop(options) {
         paths[packageId] = [packagePath.replace(/\\/g, '/')]; // we do not want Windows separators here
       });
     } else {
-      paths[settings.package || name] = [settings.local];
+      paths[pkg.package || name] = [pkg.local];
     }
   }
 
@@ -240,9 +244,10 @@ const develop = async function develop(options) {
   }
 };
 
-exports.cloneRepository = cloneRepository;
-exports.openRepository = openRepository;
-exports.setHead = setHead;
-exports.checkoutRepository = checkoutRepository;
-exports.getRepoDir = getRepoDir;
-exports.develop = develop;
+module.exports = {
+  cloneRepository,
+  openRepository,
+  checkoutRepository,
+  getRepoDir,
+  develop
+};
