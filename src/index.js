@@ -29,7 +29,9 @@ function getRepoDir(root, output) {
 }
 
 function getDefaultBranch(repository) {
-  return repository.revparse(['--abbrev-ref', 'origin/HEAD']).then((result) => result.replace('origin/', ''));
+  return repository
+    .revparse(['--abbrev-ref', 'origin/HEAD'])
+    .then((result) => result.replace('origin/', ''));
 }
 
 function cloneRepository(name, path, url, fetchUrl) {
@@ -38,25 +40,44 @@ function cloneRepository(name, path, url, fetchUrl) {
     .clone(getRemotePath(fetchUrl || url), path)
     .then(() => {
       if (fetchUrl) {
-        return gitP(path).remote(['set-url', '--push', 'origin', getRemotePath(url)]);
+        return gitP(path).remote([
+          'set-url',
+          '--push',
+          'origin',
+          getRemotePath(url),
+        ]);
       }
     })
     .then(() => {
       console.log(chalk.green(`✓ cloned ${name} at ${path}`));
     })
     .then(() => gitP(path))
-    .catch((err) => console.error(chalk.red(`Cannot clone ${fetchUrl || url}`, err)));
+    .catch((err) =>
+      console.error(chalk.red(`Cannot clone ${fetchUrl || url}`, err)),
+    );
 }
 
 function setHead(name, repository, settings, options) {
-  const { reset, lastTag, noFetch, fallbackToDefaultBranch, forceDefaultBranch } = options || {};
+  const {
+    reset,
+    lastTag,
+    noFetch,
+    fallbackToDefaultBranch,
+    forceDefaultBranch,
+  } = options || {};
   let promise;
   if (reset) {
-    promise = repository.reset('hard').then(() => console.log(chalk.yellow.inverse(`Hard reset in ${name}.`)));
+    promise = repository
+      .reset('hard')
+      .then(() => console.log(chalk.yellow.inverse(`Hard reset in ${name}.`)));
   } else {
     promise = repository.status().then((status) => {
       if (status.files.length > 0) {
-        console.log(chalk.yellow.inverse(`Cannot update ${name}. Commit your changes first.`));
+        console.log(
+          chalk.yellow.inverse(
+            `Cannot update ${name}. Commit your changes first.`,
+          ),
+        );
         return { abort: true };
       } else {
         return {};
@@ -76,15 +97,24 @@ function setHead(name, repository, settings, options) {
         return fetchOrNot
           .then(() => repository.checkout(settings.tag))
           .then(
-            () => console.log(chalk.green(`✓ update ${name} to tag ${settings.tag}`)),
+            () =>
+              console.log(
+                chalk.green(`✓ update ${name} to tag ${settings.tag}`),
+              ),
             () => {
-              console.error(chalk.red(`✗ tag ${settings.tag} does not exist in ${name}`));
+              console.error(
+                chalk.red(`✗ tag ${settings.tag} does not exist in ${name}`),
+              );
               if (fallbackToDefaultBranch) {
                 return getDefaultBranch(repository).then((defaultBranch) => {
                   return repository
                     .checkout(defaultBranch)
                     .then(() =>
-                      console.log(chalk.yellow(`✓ update ${name} to {defaultBranch} instead of ${settings.tag}`)),
+                      console.log(
+                        chalk.yellow(
+                          `✓ update ${name} to {defaultBranch} instead of ${settings.tag}`,
+                        ),
+                      ),
                     );
                 });
               } else {
@@ -96,7 +126,9 @@ function setHead(name, repository, settings, options) {
         return fetchOrNot
           .then(() => getDefaultBranch(repository))
           .then((defaultBranch) => {
-            let branch = !forceDefaultBranch ? settings.branch || defaultBranch : defaultBranch;
+            let branch = !forceDefaultBranch
+              ? settings.branch || defaultBranch
+              : defaultBranch;
             return repository
               .checkout(branch)
               .then(() => {
@@ -104,21 +136,34 @@ function setHead(name, repository, settings, options) {
                   return repository
                     .pull('origin', branch, { '--rebase': 'true' })
                     .catch(() =>
-                      console.error(chalk.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)),
+                      console.error(
+                        chalk.yellow.inverse(
+                          `Cannot merge origin/${branch}. Please merge manually.`,
+                        ),
+                      ),
                     );
                 } else {
                   return Promise.resolve(true);
                 }
               })
               .then(
-                () => console.log(chalk.green(`✓ update ${name} to branch ${branch}`)),
+                () =>
+                  console.log(
+                    chalk.green(`✓ update ${name} to branch ${branch}`),
+                  ),
                 () => {
-                  console.error(chalk.red(`✗ branch ${branch} does not exist in ${name}`));
+                  console.error(
+                    chalk.red(`✗ branch ${branch} does not exist in ${name}`),
+                  );
                   if (fallbackToDefaultBranch) {
                     return repository
                       .checkout(defaultBranch)
                       .then(() =>
-                        console.log(chalk.yellow(`✓ update ${name} to ${defaultBranch} instead of ${branch}`)),
+                        console.log(
+                          chalk.yellow(
+                            `✓ update ${name} to ${defaultBranch} instead of ${branch}`,
+                          ),
+                        ),
                       );
                   }
                 },
@@ -146,7 +191,15 @@ function openRepository(name, path) {
 }
 
 function checkoutRepository(name, root, settings, options) {
-  const { noFetch, reset, lastTag, https, fetchHttps, fallbackToDefaultBranch, forceDefaultBranch } = options || {};
+  const {
+    noFetch,
+    reset,
+    lastTag,
+    https,
+    fetchHttps,
+    fallbackToDefaultBranch,
+    forceDefaultBranch,
+  } = options || {};
   const pathToRepo = path.join(root, name);
   let url = settings.url;
   let fetchUrl;
@@ -160,10 +213,18 @@ function checkoutRepository(name, root, settings, options) {
     : openRepository(name, pathToRepo);
   return promise.then((git) => {
     if (git) {
-      return setHead(name, git, settings, { reset, lastTag, noFetch, fallbackToDefaultBranch, forceDefaultBranch })
+      return setHead(name, git, settings, {
+        reset,
+        lastTag,
+        noFetch,
+        fallbackToDefaultBranch,
+        forceDefaultBranch,
+      })
         .then(() => git.log())
         .then((commits) => {
-          const tags = commits.latest.refs.split(', ').filter((ref) => ref.includes('tag: '));
+          const tags = commits.latest.refs
+            .split(', ')
+            .filter((ref) => ref.includes('tag: '));
           return tags.length > 0 ? tags[0].slice(5) : '';
         });
     } else {
@@ -175,7 +236,9 @@ function checkoutRepository(name, root, settings, options) {
 
 async function developPackages(pkgs, options) {
   const repoDir = getRepoDir(options.root, options.output);
-  const developedPackages = Object.keys(pkgs).filter((name) => pkgs[name].develop ?? true);
+  const developedPackages = Object.keys(pkgs).filter(
+    (name) => pkgs[name].develop ?? true,
+  );
   const paths = {};
 
   for (let name of developedPackages) {
@@ -188,7 +251,11 @@ async function developPackages(pkgs, options) {
       }
       const packages = pkg.packages || { [pkg.package || name]: pkg.path };
       Object.entries(packages).forEach(([packageId, subPath]) => {
-        let packagePath = path.join('.', options.output || DEVELOP_DIRECTORY, name);
+        let packagePath = path.join(
+          '.',
+          options.output || DEVELOP_DIRECTORY,
+          name,
+        );
         if (subPath) {
           packagePath = path.join(packagePath, subPath);
         }
@@ -204,16 +271,24 @@ async function developPackages(pkgs, options) {
 
 function writeConfigFile(paths, options, developedPackages) {
   // update paths in configFile
-  const defaultConfigFile = fs.existsSync('./tsconfig.base.json') ? 'tsconfig.base.json' : 'tsconfig.json';
+  const defaultConfigFile = fs.existsSync('./tsconfig.base.json')
+    ? 'tsconfig.base.json'
+    : 'tsconfig.json';
   const configFile = options.configFile || defaultConfigFile;
-  const tsconfig = JSON.parse(fs.readFileSync(path.join(options.root || '.', configFile)));
+  const tsconfig = JSON.parse(
+    fs.readFileSync(path.join(options.root || '.', configFile)),
+  );
   const baseUrl = tsconfig.compilerOptions.baseUrl;
 
   const nonDevelop = Object.entries(tsconfig.compilerOptions.paths || {})
     .filter(
       ([pkg, path]) =>
         !developedPackages.includes(pkg) &&
-        !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`),
+        !path[0].startsWith(
+          baseUrl === 'src'
+            ? `${DEVELOP_DIRECTORY}/`
+            : `src/${DEVELOP_DIRECTORY}`,
+        ),
     )
     .reduce((acc, [pkg, path]) => {
       acc[pkg] = path;
@@ -227,22 +302,33 @@ function writeConfigFile(paths, options, developedPackages) {
 
   tsconfig.compilerOptions.paths = { ...nonDevelop, ...updates };
   console.log(chalk.yellow(`Update paths in ${defaultConfigFile}\n`));
-  fs.writeFileSync(path.join(options.root || '.', configFile), JSON.stringify(tsconfig, null, 4));
+  fs.writeFileSync(
+    path.join(options.root || '.', configFile),
+    JSON.stringify(tsconfig, null, 4),
+  );
 }
 
 async function develop(options) {
   // Read in mrs.developer.json.
-  const raw = fs.readFileSync(path.join(options.root || '.', 'mrs.developer.json'));
+  const raw = fs.readFileSync(
+    path.join(options.root || '.', 'mrs.developer.json'),
+  );
   const rawPkgs = JSON.parse(raw);
 
   // Checkout the repos.
-  const { paths, pkgs, developedPackages } = await developPackages(rawPkgs, options);
+  const { paths, pkgs, developedPackages } = await developPackages(
+    rawPkgs,
+    options,
+  );
 
   if (!options.noConfig) writeConfigFile(paths, options, developedPackages);
 
   // update mrs.developer.json with last tag if needed
   if (options.lastTag) {
-    fs.writeFileSync(path.join(options.root || '.', 'mrs.developer.json'), JSON.stringify(pkgs, null, 4));
+    fs.writeFileSync(
+      path.join(options.root || '.', 'mrs.developer.json'),
+      JSON.stringify(pkgs, null, 4),
+    );
     console.log(chalk.yellow('Update tags in mrs.developer.json\n'));
   }
 }

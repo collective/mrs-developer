@@ -14,8 +14,11 @@ const noConfig = args.indexOf('--no-config') > -1;
 const https = args.indexOf('--https') > -1;
 const fetchHttps = args.indexOf('--fetch-https') > -1;
 const fallbackToDefaultBranch =
-  args.indexOf('--fallback-to-default-branch') > -1 || args.indexOf('--default-to-master') > -1;
-const forceDefaultBranch = args.indexOf('--force-default-branch') > -1 || args.indexOf('--all-master') > -1;
+  args.indexOf('--fallback-to-default-branch') > -1 ||
+  args.indexOf('--default-to-master') > -1;
+const forceDefaultBranch =
+  args.indexOf('--force-default-branch') > -1 ||
+  args.indexOf('--all-master') > -1;
 const outputArg = args.find(function (arg) {
   return arg.startsWith('--output');
 });
