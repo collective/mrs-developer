@@ -8,7 +8,7 @@ const currentPath = process.cwd();
 
 const DEVELOP_DIRECTORY = 'develop';
 
-function getRemotePath (url) {
+function getRemotePath(url) {
   if (url.startsWith('.')) {
     return `${currentPath}/${url}`;
   } else {
@@ -16,7 +16,7 @@ function getRemotePath (url) {
   }
 }
 
-function getRepoDir (root, output) {
+function getRepoDir(root, output) {
   // Check for download directory; create if needed.
   const repoDir = path.join(root || '.', 'src', output || DEVELOP_DIRECTORY);
   if (!fs.existsSync(repoDir)) {
@@ -28,14 +28,14 @@ function getRepoDir (root, output) {
   return repoDir;
 }
 
-function getDefaultBranch (repository) {
-  return repository.revparse(['--abbrev-ref', 'origin/HEAD'])
-    .then((result) => result.replace('origin/', ''));
+function getDefaultBranch(repository) {
+  return repository.revparse(['--abbrev-ref', 'origin/HEAD']).then((result) => result.replace('origin/', ''));
 }
 
-function cloneRepository (name, path, url, fetchUrl) {
+function cloneRepository(name, path, url, fetchUrl) {
   console.log(`Cloning ${name} from ${fetchUrl || url}...`);
-  return gitP().clone(getRemotePath(fetchUrl || url), path)
+  return gitP()
+    .clone(getRemotePath(fetchUrl || url), path)
     .then(() => {
       if (fetchUrl) {
         return gitP(path).remote(['set-url', '--push', 'origin', getRemotePath(url)]);
@@ -48,7 +48,7 @@ function cloneRepository (name, path, url, fetchUrl) {
     .catch((err) => console.error(chalk.red(`Cannot clone ${fetchUrl || url}`, err)));
 }
 
-function setHead (name, repository, settings, options) {
+function setHead(name, repository, settings, options) {
   const { reset, lastTag, noFetch, fallbackToDefaultBranch, forceDefaultBranch } = options || {};
   let promise;
   if (reset) {
@@ -80,58 +80,56 @@ function setHead (name, repository, settings, options) {
             () => {
               console.error(chalk.red(`✗ tag ${settings.tag} does not exist in ${name}`));
               if (fallbackToDefaultBranch) {
-                return getDefaultBranch(repository).then(
-                  (defaultBranch) => {
-                    return repository
-                      .checkout(defaultBranch)
-                      .then(() => console.log(chalk.yellow(`✓ update ${name} to {defaultBranch} instead of ${settings.tag}`)));
-                  }
-                );
+                return getDefaultBranch(repository).then((defaultBranch) => {
+                  return repository
+                    .checkout(defaultBranch)
+                    .then(() =>
+                      console.log(chalk.yellow(`✓ update ${name} to {defaultBranch} instead of ${settings.tag}`)),
+                    );
+                });
               } else {
                 return Promise.resolve(true);
               }
-            }
+            },
           );
       } else {
         return fetchOrNot
           .then(() => getDefaultBranch(repository))
-          .then(
-            (defaultBranch) => {
-              let branch = !forceDefaultBranch ? settings.branch || defaultBranch : defaultBranch;
-              return repository
-                .checkout(branch)
-                .then(() => {
-                  if (!noFetch) {
+          .then((defaultBranch) => {
+            let branch = !forceDefaultBranch ? settings.branch || defaultBranch : defaultBranch;
+            return repository
+              .checkout(branch)
+              .then(() => {
+                if (!noFetch) {
+                  return repository
+                    .pull('origin', branch, { '--rebase': 'true' })
+                    .catch(() =>
+                      console.error(chalk.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`)),
+                    );
+                } else {
+                  return Promise.resolve(true);
+                }
+              })
+              .then(
+                () => console.log(chalk.green(`✓ update ${name} to branch ${branch}`)),
+                () => {
+                  console.error(chalk.red(`✗ branch ${branch} does not exist in ${name}`));
+                  if (fallbackToDefaultBranch) {
                     return repository
-                      .pull('origin', branch, { '--rebase': 'true' })
-                      .catch(() =>
-                        console.error(chalk.yellow.inverse(`Cannot merge origin/${branch}. Please merge manually.`))
+                      .checkout(defaultBranch)
+                      .then(() =>
+                        console.log(chalk.yellow(`✓ update ${name} to ${defaultBranch} instead of ${branch}`)),
                       );
-                  } else {
-                    return Promise.resolve(true);
                   }
-                })
-                .then(
-                  () => console.log(chalk.green(`✓ update ${name} to branch ${branch}`)),
-                  () => {
-                    console.error(chalk.red(`✗ branch ${branch} does not exist in ${name}`));
-                    if (fallbackToDefaultBranch) {
-                      return repository
-                        .checkout(defaultBranch)
-                        .then(() =>
-                          console.log(chalk.yellow(`✓ update ${name} to ${defaultBranch} instead of ${branch}`))
-                        );
-                    }
-                  }
-                );
-            }
-          );
+                },
+              );
+          });
       }
     }
   });
 }
 
-function openRepository (name, path) {
+function openRepository(name, path) {
   const git = gitP(path);
   return git
     .checkIsRepo()
@@ -177,7 +175,7 @@ function checkoutRepository(name, root, settings, options) {
 
 async function developPackages(pkgs, options) {
   const repoDir = getRepoDir(options.root, options.output);
-  const developedPackages = Object.keys(pkgs).filter(name => pkgs[name].develop ?? true);
+  const developedPackages = Object.keys(pkgs).filter((name) => pkgs[name].develop ?? true);
   const paths = {};
 
   for (let name of developedPackages) {
@@ -201,7 +199,7 @@ async function developPackages(pkgs, options) {
     }
   }
 
-  return {paths, pkgs, developedPackages};
+  return { paths, pkgs, developedPackages };
 }
 
 function writeConfigFile(paths, options, developedPackages) {
@@ -215,7 +213,7 @@ function writeConfigFile(paths, options, developedPackages) {
     .filter(
       ([pkg, path]) =>
         !developedPackages.includes(pkg) &&
-          !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`)
+        !path[0].startsWith(baseUrl === 'src' ? `${DEVELOP_DIRECTORY}/` : `src/${DEVELOP_DIRECTORY}`),
     )
     .reduce((acc, [pkg, path]) => {
       acc[pkg] = path;
@@ -238,10 +236,9 @@ async function develop(options) {
   const rawPkgs = JSON.parse(raw);
 
   // Checkout the repos.
-  const {paths, pkgs, developedPackages} = await developPackages(rawPkgs, options);
+  const { paths, pkgs, developedPackages } = await developPackages(rawPkgs, options);
 
-  if (!options.noConfig)
-    writeConfigFile(paths, options, developedPackages);
+  if (!options.noConfig) writeConfigFile(paths, options, developedPackages);
 
   // update mrs.developer.json with last tag if needed
   if (options.lastTag) {

@@ -32,7 +32,7 @@ describe('cloneRepository', () => {
       'repo1',
       './test/src/develop/repo1',
       './test/fake-push-remote/repo1',
-      './test/fake-remote/repo1'
+      './test/fake-remote/repo1',
     );
     const remotes = await repo.getRemotes(true);
     expect(remotes[0].refs.fetch).to.contain('./test/fake-remote/repo1');
