@@ -1,3 +1,8 @@
+# 2.1.0 (unreleased)
+
+- Parallelize the repository actions. For the case of large number of packages (ex: 40), there's a 20x speedup in operation [tiberiuichim]
+- Install Prettier, reformat code using Prettier [tiberiuichim]
+
 # 2.0.0 (2022-10-27)
 
 - Support default branch names other than master and main [davisagli]

@@ -7,7 +7,8 @@
   },
   "main": "src/index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/mocha/bin/mocha",
+    "test:debug": "node --inspect-brk ./node_modules/mocha/bin/mocha"
   },
   "keywords": [
     "multirepo",
@@ -26,13 +27,18 @@
   },
   "homepage": "https://github.com/collective/mrs-developer#readme",
   "dependencies": {
+    "async": "^3.2.4",
     "chalk": "^2.4.2",
     "simple-git": "^3.3.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "eslint": "^7.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-prettier": "^0.0.0-empty",
     "mocha": "^6.2.3",
-    "mock-fs": "^4.13.0"
+    "mock-fs": "^4.13.0",
+    "prettier": "^2.8.0"
   }
 }

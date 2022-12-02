@@ -20,7 +20,7 @@ describe('checkoutRepository', () => {
         url: './test/fake-remote/repo1',
         branch: 'staging',
       },
-      {}
+      {},
     );
     const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
     const status = await repo.status();
@@ -39,7 +39,7 @@ describe('checkoutRepository', () => {
       },
       {
         fetchHttps: true,
-      }
+      },
     );
     const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
     const remotes = await repo.getRemotes(true);
@@ -56,7 +56,7 @@ describe('checkoutRepository', () => {
         url: './test/fake-remote/repo1',
         branch: 'staging',
       },
-      {}
+      {},
     );
 
     // now let's make a change in the remote
@@ -70,7 +70,7 @@ describe('checkoutRepository', () => {
         url: './test/fake-remote/repo1',
         branch: 'staging',
       },
-      {}
+      {},
     );
     const repo = await git('./test/src/develop/repo1');
     const commits = await repo.log();
@@ -95,7 +95,7 @@ describe('checkoutRepository', () => {
         url: './test/fake-remote/repo1',
         branch: 'staging',
       },
-      { noFetch: true }
+      { noFetch: true },
     );
     const repo = await git('./test/src/develop/repo1');
     const commits = await repo.log();
