@@ -7,8 +7,8 @@
   },
   "main": "src/index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha",
-    "test:debug": "node --inspect-brk ./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/mocha/bin/_mocha",
+    "test:debug": "node --inspect-brk ./node_modules/mocha/bin/_mocha"
   },
   "keywords": [
     "multirepo",
@@ -37,7 +37,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-prettier": "^0.0.0-empty",
-    "mocha": "^6.2.3",
+    "mocha": "^10.2.0",
     "mock-fs": "^4.13.0",
     "prettier": "^2.8.0"
   }
