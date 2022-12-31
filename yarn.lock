@@ -297,7 +297,7 @@ cross-spawn@^7.0.2:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-debug@4.3.4, debug@^4.0.1, debug@^4.1.1, debug@^4.3.3:
+debug@4.3.4, debug@^4.0.1, debug@^4.1.1, debug@^4.3.4:
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
@@ -1010,13 +1010,13 @@ shebang-regex@^3.0.0:
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
 simple-git@^3.3.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/simple-git/-/simple-git-3.5.0.tgz#3c3538f4d7a1b3c8f3904412b12740bdcad9c8b1"
-  integrity sha512-fZsaq5nzdxQRhMNs6ESGLpMUHoL5GRP+boWPhq9pMYMKwOGZV2jHOxi8AbFFA2Y/6u4kR99HoULizSbpzaODkA==
+  version "3.15.0"
+  resolved "https://registry.yarnpkg.com/simple-git/-/simple-git-3.15.0.tgz#301a95a943c4f9b0a21d051eb6e6d0ffe4c9754f"
+  integrity sha512-FiWoMPlcYHQ+ApRihUsGjC/ZmIlWj62S6MBCwOunczvXcLQt+9ZdrysDrR6QVepkRQfEAaBXrN2QtJKrN6zbtg==
   dependencies:
     "@kwsites/file-exists" "^1.1.1"
     "@kwsites/promise-deferred" "^1.1.1"
-    debug "^4.3.3"
+    debug "^4.3.4"
 
 slice-ansi@^4.0.0:
   version "4.0.0"
