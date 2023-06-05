@@ -315,6 +315,19 @@ async function develop(options) {
   }
 }
 
+function disabledPackages(options) {
+  const mrsDeveloperJSON = JSON.parse(
+    fs.readFileSync(path.join(options.root || '.', 'mrs.developer.json')),
+  );
+
+  return Object.entries(mrsDeveloperJSON || {})
+    .filter(([name, config]) => config.develop === false)
+    .reduce((acc, [name, config]) => {
+      acc.push(config.package || name);
+      return acc;
+    }, []);
+}
+
 function writeConfigFile(paths, options, developedPackages) {
   // update paths in configFile
   const defaultConfigFile = fs.existsSync('./tsconfig.base.json')
@@ -336,6 +349,7 @@ function writeConfigFile(paths, options, developedPackages) {
             : `src/${DEVELOP_DIRECTORY}`,
         ),
     )
+    .filter(([pkg, path]) => !disabledPackages(options).includes(pkg))
     .reduce((acc, [pkg, path]) => {
       acc[pkg] = path;
       return acc;
