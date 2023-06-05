@@ -153,9 +153,9 @@ Properties:
 - `url`: Mandatory. Git repository remote URL.
 - `branch`: Optional. Branch name, defaults to the remote's default branch. Ignored if `tag` is defined.
 - `tag`: Optional. Tag name.
-- `develop`: Optional. Boolean, can be toggled on/off to activate/deactivate a package. Default is true.
+- `develop`: Optional. Boolean, can be toggled on/off to activate/deactivate a package. If activated, then deactivated afterwards, the package gets removed from `jsconfig` maintaining the synchronization with `mrs.developer.json`. Default is `true`.
 
-## Usage with React
+## Usage with (non-TypeScript) React
 
 Create a minimal `jsconfig.json` file in the project root (see https://code.visualstudio.com/docs/languages/jsconfig):
 
