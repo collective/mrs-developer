@@ -153,7 +153,7 @@ Properties:
 - `url`: Mandatory. Git repository remote URL.
 - `branch`: Optional. Branch name, defaults to the remote's default branch. Ignored if `tag` is defined.
 - `tag`: Optional. Tag name.
-- `develop`: Optional. Boolean, can be toggled on/off to activate/deactivate a package. If activated, then deactivated afterwards, the package gets removed from `jsconfig` maintaining the syncronization with `mrs.developer.json`. Default is true.
+- `develop`: Optional. Boolean, can be toggled on/off to activate/deactivate a package. If activated, then deactivated afterwards, the package gets removed from `jsconfig` maintaining the synchronization with `mrs.developer.json`. Default is `true`.
 
 ## Usage with (non-TypeScript) React
 
