@@ -154,6 +154,7 @@ Properties:
 - `branch`: Optional. Branch name, defaults to the remote's default branch. Ignored if `tag` is defined.
 - `tag`: Optional. Tag name.
 - `develop`: Optional. Boolean, can be toggled on/off to activate/deactivate a package. If activated, then deactivated afterwards, the package gets removed from `jsconfig` maintaining the synchronization with `mrs.developer.json`. Default is `true`.
+- `output`: Optional. Output directory override per repository. It also removes the `src/` prefix. If you still want it, you have to pass it along with the new output.
 
 ## Usage with (non-TypeScript) React
 
