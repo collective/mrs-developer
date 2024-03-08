@@ -18,9 +18,13 @@ function getRemotePath(url) {
   }
 }
 
-function getRepoDir(root, output) {
+function getRepoDir({ root, output }, { output: pkgOutput } = {}) {
   // Check for download directory; create if needed.
-  const repoDir = path.join(root || '.', 'src', output || DEVELOP_DIRECTORY);
+  const repoDir = path.join(
+    root || '.',
+    pkgOutput ? '' : 'src',
+    pkgOutput || output || DEVELOP_DIRECTORY,
+  );
   if (!fs.existsSync(repoDir)) {
     console.log(`\nCreating repoDir ${repoDir}`);
     fs.mkdirSync(repoDir);
@@ -236,9 +240,10 @@ function checkoutRepository(name, root, settings, options) {
   });
 }
 
-async function developPackage(pkg, name, options, repoDir) {
+async function developPackage(pkg, name, options) {
   let gitTag;
   const paths = {};
+  const repoDir = getRepoDir(options, pkg);
 
   if (!pkg.local) {
     gitTag = await checkoutRepository(name, repoDir, pkg, options);
@@ -262,14 +267,12 @@ async function developPackage(pkg, name, options, repoDir) {
 }
 
 async function developPackages(pkgs, options) {
-  const repoDir = getRepoDir(options.root, options.output);
   const developedPackages = Object.keys(pkgs).filter(
     (name) => pkgs[name].develop ?? true,
   );
   const paths = {};
   const tasks = developedPackages.map(
-    (name) => async () =>
-      await developPackage(pkgs[name], name, options, repoDir),
+    (name) => async () => await developPackage(pkgs[name], name, options),
   );
 
   let results = [];

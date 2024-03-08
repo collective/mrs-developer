@@ -22,6 +22,9 @@
             ],
             "local1": [
                 "some/path"
+            ],
+            "repo5": [
+                "develop/repo5"
             ]
         },
         "baseUrl": "src"

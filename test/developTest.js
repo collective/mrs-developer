@@ -23,6 +23,12 @@ describe('develop', () => {
     const repo3 = await developer.openRepository('repo3', './test/src/develop/repo3');
     commits = await repo3.log();
     expect(commits.latest.message).to.be.equal('Add file 2');
+    const repo5 = await developer.openRepository(
+      'repo5',
+      './test/packages/repo5',
+    );
+    commits = await repo5.log();
+    expect(commits.latest.message).to.be.equal('Add file 2');
   });
 
   it('updates tsconfig.json with proper paths', async () => {
