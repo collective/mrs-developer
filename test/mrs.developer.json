@@ -23,5 +23,9 @@
   },
   "local1": {
     "local": "some/path"
+  },
+  "repo5": {
+    "output": "packages",
+    "url": "./test/fake-remote/repo1"
   }
 }

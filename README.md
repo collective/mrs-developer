@@ -72,6 +72,21 @@ It is possible to keep a package in mrs-developer.json, but don't process it, by
 }
 ```
 
+You can override the default `output` provided via command line per repository in `mrs.developer.json`.
+
+```json
+{
+	"volto-light-theme": {
+		"output": "addons",
+		"package": "@kitconcept/volto-light-theme",
+		"url": "git@github.com:kitconcept/volto-light-theme.git",
+		"https": "https://github.com/kitconcept/volto-light-theme.git"
+	}
+}
+```
+
+This repository will be checked out in the `addons` directory, instead of the one provided via command line. It won't prepend the `src` prefix to it, if you still want it, you should provide it in the `output` key. This might be useful in combination with monorepos where you want to checkout packages into workspaces folders.
+
 ## Usage
 
 ```
@@ -154,6 +169,7 @@ Properties:
 - `branch`: Optional. Branch name, defaults to the remote's default branch. Ignored if `tag` is defined.
 - `tag`: Optional. Tag name.
 - `develop`: Optional. Boolean, can be toggled on/off to activate/deactivate a package. If activated, then deactivated afterwards, the package gets removed from `jsconfig` maintaining the synchronization with `mrs.developer.json`. Default is `true`.
+- `output`: Optional. Output directory override per repository.
 
 ## Usage with (non-TypeScript) React
 
