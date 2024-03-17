@@ -1,7 +1,15 @@
 /test
 /docs
 .eslintrc
+.eslintrc.js
 /mrs.developer.json
 /tsconfig.json
 /src/develop
 .travis.yml
+.prettierrc
+.towncrier
+towncrier.toml
+.changelog.draft
+news
+.github
+.release-it.json
