@@ -11,13 +11,13 @@
     "changelog": "pipx run towncrier build --draft --yes --version 0.0.0",
     "requireUpstream": false,
     "requireCleanWorkingDir": false,
-    "commitMessage": "Release mrs-developer ${version}",
+    "commitMessage": "Release ${version}",
     "tagName": "${version}",
-    "tagAnnotation": "Release mrs-developer ${version}"
+    "tagAnnotation": "Release ${version}"
   },
   "github": {
     "release": true,
-    "releaseName": "mrs-developer ${version}",
+    "releaseName": "${version}",
     "releaseNotes": "cat .changelog.draft"
   }
 }
