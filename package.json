@@ -8,7 +8,11 @@
   "main": "src/index.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/_mocha",
-    "test:debug": "node --inspect-brk ./node_modules/mocha/bin/_mocha"
+    "test:debug": "node --inspect-brk ./node_modules/mocha/bin/_mocha",
+    "dry-release": "release-it --dry-run",
+    "release": "release-it",
+    "release-major-alpha": "release-it major --preRelease=alpha",
+    "release-alpha": "release-it --preRelease=alpha"
   },
   "keywords": [
     "multirepo",
@@ -39,6 +43,7 @@
     "eslint-prettier": "^0.0.0-empty",
     "mocha": "^10.2.0",
     "mock-fs": "^4.13.0",
-    "prettier": "^2.8.0"
+    "prettier": "^2.8.0",
+    "release-it": "^17.1.1"
   }
 }
