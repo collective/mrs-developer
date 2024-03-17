@@ -1,6 +1,6 @@
 {
   "name": "mrs-developer",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "manage NPM dependencies as Git repositories",
   "bin": {
     "missdev": "src/command.js"

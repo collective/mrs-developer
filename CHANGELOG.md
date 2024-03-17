@@ -8,6 +8,12 @@
 
 <!-- towncrier release notes start -->
 
+## 2.2.0 (2024-03-17)
+
+### Feature
+
+- Added per repository `output` parameter @sneridagh [#40](https://github.com/plone/volto/issues/40)
+
 # 2.1.1 (2023-06-05)
 
 - `develop` option to deactivate a package without losing the corresponding configuration [sneridagh]
