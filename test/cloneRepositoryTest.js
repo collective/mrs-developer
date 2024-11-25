@@ -21,7 +21,7 @@ describe('cloneRepository', () => {
     expect(exists).to.be.true;
   });
 
-  it('puts the repository in ./src/develop with a shallow (noDeep) clone', async () => {
+  it('puts the repository in ./src/develop with a partial (noDeep) clone', async () => {
     const repo = await developer
       .cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1', null, { noDepth: true, tag: '1.0.0' });
 
