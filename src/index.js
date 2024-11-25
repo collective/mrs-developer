@@ -42,9 +42,11 @@ function getDefaultBranch(repository) {
 
 function cloneRepository(name, path, url, fetchUrl, options = {}) {
   console.log(`Cloning ${name} from ${fetchUrl || url}...`);
-  const { noDepth, tag } = options;
+  const { noDepth, tag, branch } = options;
   const cloneOptions =
-    noDepth && tag ? ['-b', tag, '--filter=blob:none'] : undefined;
+    noDepth && (tag || branch)
+      ? ['-b', tag || branch, '--filter=blob:none']
+      : undefined;
   return gitP()
     .clone(getRemotePath(fetchUrl || url), path, cloneOptions)
     .then(() => {
