@@ -8,6 +8,12 @@
 
 <!-- towncrier release notes start -->
 
+## 2.3.0 (2024-11-26)
+
+### Feature
+
+- Added a per repo option for partially cloning a package. @sneridagh @davisagli [#42](https://github.com/plone/volto/issues/42)
+
 ## 2.2.0 (2024-03-17)
 
 ### Feature
