@@ -170,6 +170,7 @@ Properties:
 - `tag`: Optional. Tag name.
 - `develop`: Optional. Boolean, can be toggled on/off to activate/deactivate a package. If activated, then deactivated afterwards, the package gets removed from `jsconfig` maintaining the synchronization with `mrs.developer.json`. Default is `true`.
 - `output`: Optional. Output directory override per repository.
+- `filterBlobs`: Optional. Used together with `tag` or `branch`, it creates a partial clone defaulting to the tag or branch specified. This partial clone won't clone the whole repository, but only the tag or branch specified.
 
 ## Usage with (non-TypeScript) React
 

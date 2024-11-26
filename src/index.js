@@ -40,10 +40,15 @@ function getDefaultBranch(repository) {
     .then((result) => result.replace('origin/', ''));
 }
 
-function cloneRepository(name, path, url, fetchUrl) {
+function cloneRepository(name, path, url, fetchUrl, options = {}) {
   console.log(`Cloning ${name} from ${fetchUrl || url}...`);
+  const { filterBlobs, tag, branch } = options;
+  const cloneOptions =
+    filterBlobs && (tag || branch)
+      ? ['-b', tag || branch, '--filter=blob:none']
+      : undefined;
   return gitP()
-    .clone(getRemotePath(fetchUrl || url), path)
+    .clone(getRemotePath(fetchUrl || url), path, cloneOptions)
     .then(() => {
       if (fetchUrl) {
         return gitP(path).remote([
@@ -215,7 +220,7 @@ function checkoutRepository(name, root, settings, options) {
     fetchUrl = settings.https;
   }
   const promise = !fs.existsSync(pathToRepo)
-    ? cloneRepository(name, pathToRepo, url, fetchUrl)
+    ? cloneRepository(name, pathToRepo, url, fetchUrl, settings)
     : openRepository(name, pathToRepo);
   return promise.then((git) => {
     if (git) {

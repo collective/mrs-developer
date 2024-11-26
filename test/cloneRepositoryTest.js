@@ -21,6 +21,14 @@ describe('cloneRepository', () => {
     expect(exists).to.be.true;
   });
 
+  it('puts the repository in ./src/develop with a partial (noDeep) clone', async () => {
+    const repo = await developer
+      .cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1', null, { filterBlobs: true, tag: '1.0.0' });
+
+    const branches = await repo.branchLocal();
+    expect(branches.all[0]).to.be.equals('(no');
+  });
+
   it('gets the repository remotes', async () => {
     const repo = await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
     const remotes = await repo.getRemotes();
