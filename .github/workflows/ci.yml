@@ -10,7 +10,7 @@ jobs:
       - name: Test and build
         uses: actions/setup-node@v1
         with:
-          node-version: 14.17
+          node-version: 20.16
       - run: npm install
       - run: git config --global user.email "you@example.com"
       - run: git config --global user.name "Your Name"
