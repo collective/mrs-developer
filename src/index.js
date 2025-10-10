@@ -372,7 +372,7 @@ function writeConfigFile(paths, options, developedPackages) {
   console.log(chalk.yellow(`Update paths in ${configFile}\n`));
   fs.writeFileSync(
     path.join(options.root || '.', configFile),
-    JSON.stringify(tsconfig, null, 4),
+    JSON.stringify(tsconfig, null, 2),
   );
 }
 
