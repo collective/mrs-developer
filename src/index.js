@@ -317,7 +317,7 @@ async function develop(options) {
   if (options.lastTag) {
     fs.writeFileSync(
       path.join(options.root || '.', 'mrs.developer.json'),
-      JSON.stringify(pkgs, null, 4),
+      JSON.stringify(pkgs, null, 2),
     );
     console.log(chalk.yellow('Update tags in mrs.developer.json\n'));
   }
