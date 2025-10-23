@@ -8,6 +8,13 @@
 
 <!-- towncrier release notes start -->
 
+## 2.3.2 (2025-10-23)
+
+### Bugfix
+
+- Indent mrs.developer.json with 2 spaces [#1](https://github.com/plone/volto/issues/1)
+- Indent tsconfig with 2 spaces [#1](https://github.com/plone/volto/issues/1)
+
 ## 2.3.0 (2024-11-26)
 
 ### Feature
