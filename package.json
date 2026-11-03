@@ -37,9 +37,9 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^4.0.0",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^2.7.0",
+    "eslint": "^10.8.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-prettier": "^0.0.0-empty",
     "mocha": "^12.0.3",
     "mock-fs": "^4.13.0",
