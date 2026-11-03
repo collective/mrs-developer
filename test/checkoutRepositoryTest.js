@@ -4,7 +4,7 @@ const chai = require('chai');
 const developer = require('../src/index.js');
 const expect = chai.expect;
 const exec = require('child_process').execSync;
-const git = require('simple-git');
+const { simpleGit } = require('simple-git');
 
 describe('checkoutRepository', () => {
   beforeEach(async () => {
@@ -22,7 +22,10 @@ describe('checkoutRepository', () => {
       },
       {},
     );
-    const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+    const repo = await developer.openRepository(
+      'repo1',
+      './test/src/develop/repo1',
+    );
     const status = await repo.status();
     expect(status.current).to.be.equal('staging');
     const commits = await repo.log();
@@ -41,14 +44,21 @@ describe('checkoutRepository', () => {
         fetchHttps: true,
       },
     );
-    const repo = await developer.openRepository('repo1', './test/src/develop/repo1');
+    const repo = await developer.openRepository(
+      'repo1',
+      './test/src/develop/repo1',
+    );
     const remotes = await repo.getRemotes(true);
     expect(remotes[0].refs.fetch).to.contain('./test/fake-remote/repo1');
     expect(remotes[0].refs.push).to.contain('./test/fake-push-remote/repo1');
   });
 
   it('fetchs last changes if repository exists', async () => {
-    await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
+    await developer.cloneRepository(
+      'repo1',
+      './test/src/develop/repo1',
+      './test/fake-remote/repo1',
+    );
     await developer.checkoutRepository(
       'repo1',
       './test/src/develop',
@@ -72,13 +82,17 @@ describe('checkoutRepository', () => {
       },
       {},
     );
-    const repo = await git('./test/src/develop/repo1');
+    const repo = await simpleGit('./test/src/develop/repo1');
     const commits = await repo.log();
     expect(commits.latest.message).to.be.equal('Modify file 1 again');
   });
 
   it('does not fetchs last changes if noFetch', async () => {
-    await developer.cloneRepository('repo1', './test/src/develop/repo1', './test/fake-remote/repo1');
+    await developer.cloneRepository(
+      'repo1',
+      './test/src/develop/repo1',
+      './test/fake-remote/repo1',
+    );
     await developer.checkoutRepository('repo1', './test/src/develop', {
       url: './test/fake-remote/repo1',
       branch: 'staging',
@@ -97,7 +111,7 @@ describe('checkoutRepository', () => {
       },
       { noFetch: true },
     );
-    const repo = await git('./test/src/develop/repo1');
+    const repo = await simpleGit('./test/src/develop/repo1');
     const commits = await repo.log();
     expect(commits.latest.message).to.be.equal('Modify file 1');
   });

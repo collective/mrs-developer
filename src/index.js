@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
-const gitP = require('simple-git');
+const { simpleGit } = require('simple-git');
 const parallel = require('async/parallel');
 
 const currentPath = process.cwd();
@@ -47,11 +47,11 @@ function cloneRepository(name, path, url, fetchUrl, options = {}) {
     filterBlobs && (tag || branch)
       ? ['-b', tag || branch, '--filter=blob:none']
       : undefined;
-  return gitP()
+  return simpleGit()
     .clone(getRemotePath(fetchUrl || url), path, cloneOptions)
     .then(() => {
       if (fetchUrl) {
-        return gitP(path).remote([
+        return simpleGit(path).remote([
           'set-url',
           '--push',
           'origin',
@@ -62,7 +62,7 @@ function cloneRepository(name, path, url, fetchUrl, options = {}) {
     .then(() => {
       console.log(chalk.green(`✓ cloned ${name} at ${path}`));
     })
-    .then(() => gitP(path))
+    .then(() => simpleGit(path))
     .catch((err) =>
       console.error(chalk.red(`Cannot clone ${fetchUrl || url}`, err)),
     );
@@ -186,7 +186,7 @@ function setHead(name, repository, settings, options) {
 }
 
 function openRepository(name, path) {
-  const git = gitP(path);
+  const git = simpleGit(path);
   return git
     .checkIsRepo()
     .then((isRepo) => {
@@ -197,7 +197,7 @@ function openRepository(name, path) {
         throw `No repo: ${name}`;
       }
     })
-    .then(() => gitP(path))
+    .then(() => simpleGit(path))
     .catch((err) => console.error(chalk.red(`Cannot open ${path}`, err)));
 }
 
