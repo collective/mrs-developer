@@ -1,13 +1,13 @@
 {
   "name": "mrs-developer",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "manage NPM dependencies as Git repositories",
   "bin": {
     "missdev": "src/command.js"
   },
   "main": "src/index.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/_mocha",
+    "test": "mocha",
     "test:debug": "node --inspect-brk ./node_modules/mocha/bin/_mocha",
     "dry-release": "release-it --dry-run",
     "release": "release-it",
@@ -33,15 +33,15 @@
   "dependencies": {
     "async": "^3.2.4",
     "chalk": "^2.4.2",
-    "simple-git": "^3.3.0"
+    "simple-git": "^4.0.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^10.8.1",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-prettier": "^4.2.1",
+    "eslint": "^4.0.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^2.7.0",
     "eslint-prettier": "^0.0.0-empty",
-    "mocha": "^10.8.2",
+    "mocha": "^12.0.3",
     "mock-fs": "^4.13.0",
     "prettier": "^2.8.0",
     "release-it": "^21.1.2"
